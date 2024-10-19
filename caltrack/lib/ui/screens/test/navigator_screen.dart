@@ -26,26 +26,13 @@ class NavigatorScreen extends StatelessWidget {
               },
               child: Text('Go to Login Screen'),
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.camera);
-              },
-              child: Text('Go to Camera Screen'),
-            ),
+
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.maps);
               },
               child: Text('Go to Maps Screen'),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.gemini);
-              },
-              child: Text('Go to Gemini Screen'),
             ),
             SizedBox(height: 16),
             ElevatedButton(

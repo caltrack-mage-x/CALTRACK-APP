@@ -13,10 +13,8 @@ class AppRoutes {
   // Test Page
   static const String home      = '/home-test';
   static const String login     = '/login-test';
-  static const String camera    = '/camera-test';
   static const String navigator = '/navigator-test';
   static const String maps      = '/maps-test';
-  static const String gemini    = '/gemini-test';
 
   // Actual Page
   static const String challenge = '/challenge';
@@ -28,14 +26,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case login:
         return MaterialPageRoute(builder: (_) => LoginScreen());
-      case camera:
-        return MaterialPageRoute(builder: (_) => CameraScreen());
       case navigator:
         return MaterialPageRoute(builder: (_) => NavigatorScreen());
       case maps:
         return MaterialPageRoute(builder: (_) => MapsScreen());
-      case gemini:
-        return MaterialPageRoute(builder: (_) => GeminiScreen());
       case challenge:
         return MaterialPageRoute(builder: (_) => ChallengePage());
       case capture:
