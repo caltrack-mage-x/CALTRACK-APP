@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/gamification/achievement_model.dart';
 
@@ -7,9 +8,12 @@ class AchievementRepository {
   AchievementRepository(this._client);
 
   Future<List<AchievementModel>> getAllAchievements() async {
-    final response = await _client.from('Achievement').select().maybeSingle();
+    final response = await _client.from('Achievement').select();
+
+    debugPrint('getAllAchievements Response: $response');
 
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No achievements found.');
       throw Exception('No achievements found.');
     }
 
@@ -22,9 +26,12 @@ class AchievementRepository {
     final response = await _client
         .from('Achievement')
         .insert(achievement.toJson())
-        .maybeSingle();
+        .single();
+
+    debugPrint('createAchievement Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to create achievement.');
       throw Exception('Failed to create achievement.');
     }
   }
@@ -34,9 +41,12 @@ class AchievementRepository {
         .from('Achievement')
         .update(achievement.toJson())
         .eq('achievement_id', achievement.achievementId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('updateAchievement Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to update achievement.');
       throw Exception('Failed to update achievement.');
     }
   }
@@ -46,9 +56,12 @@ class AchievementRepository {
         .from('Achievement')
         .delete()
         .eq('achievement_id', achievementId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('deleteAchievement Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to delete achievement.');
       throw Exception('Failed to delete achievement.');
     }
   }

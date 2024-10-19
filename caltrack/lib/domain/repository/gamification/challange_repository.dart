@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/gamification/challange_model.dart';
 
@@ -7,9 +8,12 @@ class ChallengeRepository {
   ChallengeRepository(this._client);
 
   Future<List<ChallengeModel>> getAllChallenges() async {
-    final response = await _client.from('Challenge').select().maybeSingle();
+    final response = await _client.from('Challenge').select();
+
+    debugPrint('getAllChallenges Response: $response');
 
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No challenges found.');
       throw Exception('No challenges found.');
     }
 
@@ -22,9 +26,12 @@ class ChallengeRepository {
     final response = await _client
         .from('Challenge')
         .insert(challenge.toJson())
-        .maybeSingle();
+        .single();
+
+    debugPrint('createChallenge Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to create challenge.');
       throw Exception('Failed to create challenge.');
     }
   }
@@ -34,9 +41,12 @@ class ChallengeRepository {
         .from('Challenge')
         .update(challenge.toJson())
         .eq('challenge_id', challenge.challengeId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('updateChallenge Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to update challenge.');
       throw Exception('Failed to update challenge.');
     }
   }
@@ -46,9 +56,12 @@ class ChallengeRepository {
         .from('Challenge')
         .delete()
         .eq('challenge_id', challengeId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('deleteChallenge Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to delete challenge.');
       throw Exception('Failed to delete challenge.');
     }
   }

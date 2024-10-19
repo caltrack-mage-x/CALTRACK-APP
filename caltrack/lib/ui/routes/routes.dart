@@ -1,3 +1,4 @@
+import 'package:caltrack/ui/screens/challenge/challenge_screen.dart';
 import 'package:caltrack/ui/screens/test/camera_screen.dart';
 import 'package:caltrack/ui/screens/test/gemini_screen.dart';
 import 'package:caltrack/ui/screens/test/home_screen.dart';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String navigator = '/navigator';
   static const String maps      = '/maps';
   static const String gemini    = '/gemini';
+  static const String challenge = '/challenge';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -28,6 +30,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => MapsScreen());
       case gemini:
         return MaterialPageRoute(builder: (_) => GeminiScreen());
+      case challenge:
+        return MaterialPageRoute(builder: (_) => ChallengePage());
       default:
         return MaterialPageRoute(builder: (_) => LoginScreen());
     }

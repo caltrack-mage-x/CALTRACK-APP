@@ -47,6 +47,13 @@ class NavigatorScreen extends StatelessWidget {
               },
               child: Text('Go to Gemini Screen'),
             ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.challenge);
+              },
+              child: Text('Go to Challenge Screen'),
+            ),
           ],
         ),
       ),
