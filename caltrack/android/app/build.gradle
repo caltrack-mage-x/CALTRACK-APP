@@ -29,7 +29,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.caltrack"
-        minSdkVersion 20  
+        minSdkVersion 28
         targetSdkVersion 34  
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

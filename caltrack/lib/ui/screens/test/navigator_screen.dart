@@ -54,6 +54,13 @@ class NavigatorScreen extends StatelessWidget {
               },
               child: Text('Go to Challenge Screen'),
             ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.capture);
+              },
+              child: Text('Go to Capture Screen'),
+            ),
           ],
         ),
       ),

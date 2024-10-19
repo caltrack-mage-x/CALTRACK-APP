@@ -14,8 +14,8 @@ class ChallengeTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80, // Set a custom height for the top bar
-      padding: EdgeInsets.only(top: 8), // Add top padding
+      height: 80,
+      padding: EdgeInsets.only(top: 8),
       child: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
@@ -51,7 +51,7 @@ class ChallengeTopBar extends StatelessWidget {
         label,
         style: TextStyle(
           color: isSelected ? Colors.orange : Colors.grey,
-          fontWeight: FontWeight.w600, // Use a slightly bolder font weight
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
