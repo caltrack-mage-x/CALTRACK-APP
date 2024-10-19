@@ -1,5 +1,7 @@
+// Fixed
 import 'package:caltrack/domain/models/user/view_userprofile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class UserProfileRepository {
   final SupabaseClient _client;
@@ -9,7 +11,10 @@ class UserProfileRepository {
   Future<List<UserProfileModel>> getAllUserProfiles() async {
     final response = await _client.from('user_profile').select();
 
+    debugPrint('getAllUserProfiles Response: $response');
+
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No user profiles found.');
       throw Exception('No user profiles found.');
     }
 
@@ -25,7 +30,10 @@ class UserProfileRepository {
         .eq('user_id', userId)
         .maybeSingle();
 
+    debugPrint('getUserProfile Response for userId $userId: $response');
+
     if (response == null) {
+      debugPrint('User profile not found for userId $userId.');
       return null;
     }
 

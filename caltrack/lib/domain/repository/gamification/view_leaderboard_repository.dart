@@ -1,5 +1,7 @@
+// Fixed
 import 'package:caltrack/domain/models/gamification/view_leaderboard.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/cupertino.dart';
 
 class LeaderboardViewRepository {
   final SupabaseClient _client;
@@ -9,7 +11,10 @@ class LeaderboardViewRepository {
   Future<List<LeaderboardViewModel>> getAllLeaderboardEntries() async {
     final response = await _client.from('leaderboard_view').select();
 
+    debugPrint('getAllLeaderboardEntries Response: $response');
+
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No leaderboard entries found.');
       throw Exception('No leaderboard entries found.');
     }
 

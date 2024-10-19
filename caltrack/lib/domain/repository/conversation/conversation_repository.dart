@@ -1,3 +1,5 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/conversation/conversation_model.dart';
 
@@ -7,9 +9,12 @@ class ConversationRepository {
   ConversationRepository(this._client);
 
   Future<List<ConversationModel>> getAllConversations() async {
-    final response = await _client.from('Conversation').select().maybeSingle();
+    final response = await _client.from('Conversation').select();
+
+    debugPrint('getAllConversations Response: $response');
 
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No conversations found.');
       throw Exception('No conversations found.');
     }
 
@@ -22,9 +27,12 @@ class ConversationRepository {
     final response = await _client
         .from('Conversation')
         .insert(conversation.toJson())
-        .maybeSingle();
+        .single();
+
+    debugPrint('createConversation Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to create conversation.');
       throw Exception('Failed to create conversation.');
     }
   }
@@ -34,9 +42,12 @@ class ConversationRepository {
         .from('Conversation')
         .update(conversation.toJson())
         .eq('conversation_id', conversation.conversationId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('updateConversation Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to update conversation.');
       throw Exception('Failed to update conversation.');
     }
   }
@@ -46,9 +57,12 @@ class ConversationRepository {
         .from('Conversation')
         .delete()
         .eq('conversation_id', conversationId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('deleteConversation Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to delete conversation.');
       throw Exception('Failed to delete conversation.');
     }
   }

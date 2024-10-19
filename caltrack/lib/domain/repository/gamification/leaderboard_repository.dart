@@ -1,5 +1,7 @@
+// Fixed
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/gamification/leaderboard_model.dart';
+import 'package:flutter/cupertino.dart';
 
 class LeaderboardRepository {
   final SupabaseClient _client;
@@ -7,9 +9,12 @@ class LeaderboardRepository {
   LeaderboardRepository(this._client);
 
   Future<List<LeaderboardModel>> getAllLeaderboards() async {
-    final response = await _client.from('Leaderboard').select().maybeSingle();
+    final response = await _client.from('Leaderboard').select();
+
+    debugPrint('getAllLeaderboards Response: $response');
 
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No leaderboards found.');
       throw Exception('No leaderboards found.');
     }
 
@@ -22,9 +27,12 @@ class LeaderboardRepository {
     final response = await _client
         .from('Leaderboard')
         .insert(leaderboard.toJson())
-        .maybeSingle();
+        .single();
+
+    debugPrint('createLeaderboard Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to create leaderboard.');
       throw Exception('Failed to create leaderboard.');
     }
   }
@@ -34,9 +42,12 @@ class LeaderboardRepository {
         .from('Leaderboard')
         .update(leaderboard.toJson())
         .eq('leaderboard_id', leaderboard.leaderboardId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('updateLeaderboard Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to update leaderboard.');
       throw Exception('Failed to update leaderboard.');
     }
   }
@@ -46,9 +57,12 @@ class LeaderboardRepository {
         .from('Leaderboard')
         .delete()
         .eq('leaderboard_id', leaderboardId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('deleteLeaderboard Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to delete leaderboard.');
       throw Exception('Failed to delete leaderboard.');
     }
   }

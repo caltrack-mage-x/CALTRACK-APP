@@ -1,24 +1,26 @@
+import 'package:caltrack/domain/repository/conversation/message_repository.dart';
+
 import '../../repository/conversation/conversation_repository.dart';
 import '../../models/conversation/conversation_model.dart';
 
-class ConversationService {
-  final ConversationRepository _conversationRepository;
+class MessageService {
+  final MessageRepository _messageRepository;
 
-  ConversationService(this._conversationRepository);
+  MessageService(this._messageRepository);
 
-  Future<List<ConversationModel>> getAllConversations() async {
-    return await _conversationRepository.getAllConversations();
-  }
-
-  Future<void> createConversation(ConversationModel conversation) async {
-    await _conversationRepository.createConversation(conversation);
-  }
-
-  Future<void> updateConversation(ConversationModel conversation) async {
-    await _conversationRepository.updateConversation(conversation);
-  }
-
-  Future<void> deleteConversation(String conversationId) async {
-    await _conversationRepository.deleteConversation(conversationId);
-  }
+  // Future<List<MessageModel>> getAllConversations() async {
+  //   return await _messageRepository.getAllMessages();
+  // }
+  //
+  // Future<void> createConversation(ConversationModel conversation) async {
+  //   await _messageRepository.createConversation(conversation);
+  // }
+  //
+  // Future<void> updateConversation(ConversationModel conversation) async {
+  //   await _messageRepository.updateConversation(conversation);
+  // }
+  //
+  // Future<void> deleteConversation(String conversationId) async {
+  //   await _messageRepository.deleteConversation(conversationId);
+  // }
 }

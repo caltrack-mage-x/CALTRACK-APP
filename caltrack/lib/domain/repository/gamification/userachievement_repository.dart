@@ -1,5 +1,7 @@
+// Fixed
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/gamification/userachievement_model.dart';
+import 'package:flutter/cupertino.dart';
 
 class UserAchievementRepository {
   final SupabaseClient _client;
@@ -7,40 +9,45 @@ class UserAchievementRepository {
   UserAchievementRepository(this._client);
 
   Future<List<UserAchievementModel>> getAllUserAchievements() async {
-    final response =
-        await _client.from('UserAchievement').select().maybeSingle();
+    final response = await _client.from('UserAchievement').select();
+
+    debugPrint('getAllUserAchievements Response: $response');
 
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No user achievements found.');
       throw Exception('No user achievements found.');
     }
 
     return (response as List)
-        .map(
-            (userAchievement) => UserAchievementModel.fromJson(userAchievement))
+        .map((userAchievement) => UserAchievementModel.fromJson(userAchievement))
         .toList();
   }
 
-  Future<void> createUserAchievement(
-      UserAchievementModel userAchievement) async {
+  Future<void> createUserAchievement(UserAchievementModel userAchievement) async {
     final response = await _client
         .from('UserAchievement')
         .insert(userAchievement.toJson())
-        .maybeSingle();
+        .single();
+
+    debugPrint('createUserAchievement Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to create user achievement.');
       throw Exception('Failed to create user achievement.');
     }
   }
 
-  Future<void> updateUserAchievement(
-      UserAchievementModel userAchievement) async {
+  Future<void> updateUserAchievement(UserAchievementModel userAchievement) async {
     final response = await _client
         .from('UserAchievement')
         .update(userAchievement.toJson())
         .eq('user_achievement_id', userAchievement.userAchievementId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('updateUserAchievement Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to update user achievement.');
       throw Exception('Failed to update user achievement.');
     }
   }
@@ -50,9 +57,12 @@ class UserAchievementRepository {
         .from('UserAchievement')
         .delete()
         .eq('user_achievement_id', userAchievementId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('deleteUserAchievement Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to delete user achievement.');
       throw Exception('Failed to delete user achievement.');
     }
   }

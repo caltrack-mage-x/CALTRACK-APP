@@ -1,15 +1,20 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/conversation/message_model.dart';
 
-class ConversationRepository {
+class MessageRepository {
   final SupabaseClient _client;
 
-  ConversationRepository(this._client);
+  MessageRepository(this._client);
 
   Future<List<ConversationModel>> getAllMessages() async {
-    final response = await _client.from('Message').select().maybeSingle();
+    final response = await _client.from('Message').select();
+
+    debugPrint('getAllMessages Response: $response');
 
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No messages found.');
       throw Exception('No messages found.');
     }
 
@@ -20,9 +25,12 @@ class ConversationRepository {
 
   Future<void> createMessage(ConversationModel message) async {
     final response =
-        await _client.from('Message').insert(message.toJson()).maybeSingle();
+    await _client.from('Message').insert(message.toJson()).single();
+
+    debugPrint('createMessage Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to create message.');
       throw Exception('Failed to create message.');
     }
   }
@@ -32,9 +40,12 @@ class ConversationRepository {
         .from('Message')
         .update(message.toJson())
         .eq('message_id', message.conversationId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('updateMessage Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to update message.');
       throw Exception('Failed to update message.');
     }
   }
@@ -44,9 +55,12 @@ class ConversationRepository {
         .from('Message')
         .delete()
         .eq('message_id', messageId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('deleteMessage Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to delete message.');
       throw Exception('Failed to delete message.');
     }
   }

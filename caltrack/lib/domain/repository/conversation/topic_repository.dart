@@ -1,3 +1,5 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/conversation/topic_model.dart';
 
@@ -7,9 +9,12 @@ class TopicRepository {
   TopicRepository(this._client);
 
   Future<List<TopicModel>> getAllTopics() async {
-    final response = await _client.from('Topic').select().maybeSingle();
+    final response = await _client.from('Topic').select();
+
+    debugPrint('getAllTopics Response: $response');
 
     if (response == null || (response as List).isEmpty) {
+      debugPrint('No topics found.');
       throw Exception('No topics found.');
     }
 
@@ -20,9 +25,12 @@ class TopicRepository {
 
   Future<void> createTopic(TopicModel topic) async {
     final response =
-        await _client.from('Topic').insert(topic.toJson()).maybeSingle();
+    await _client.from('Topic').insert(topic.toJson()).single();
+
+    debugPrint('createTopic Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to create topic.');
       throw Exception('Failed to create topic.');
     }
   }
@@ -32,9 +40,12 @@ class TopicRepository {
         .from('Topic')
         .update(topic.toJson())
         .eq('topic_id', topic.topicId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('updateTopic Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to update topic.');
       throw Exception('Failed to update topic.');
     }
   }
@@ -44,9 +55,12 @@ class TopicRepository {
         .from('Topic')
         .delete()
         .eq('topic_id', topicId)
-        .maybeSingle();
+        .single();
+
+    debugPrint('deleteTopic Response: $response');
 
     if (response == null) {
+      debugPrint('Failed to delete topic.');
       throw Exception('Failed to delete topic.');
     }
   }
