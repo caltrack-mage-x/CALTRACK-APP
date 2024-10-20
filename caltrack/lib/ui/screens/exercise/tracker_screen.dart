@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'package:caltrack/ui/widgets/exercise/activity_selector.dart';
+import 'package:caltrack/ui/widgets/exercise/map_view.dart';
+import 'package:caltrack/ui/widgets/exercise/tracking_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'package:caltrack/ui/widgets/exercise/location_service.dart';
 import 'package:caltrack/ui/widgets/exercise/snackbar_helper.dart';
+import 'package:intl/intl.dart';
 
 class TrackerScreen extends StatefulWidget {
   const TrackerScreen({super.key});
@@ -14,126 +18,75 @@ class TrackerScreen extends StatefulWidget {
 }
 
 class _TrackerScreenState extends State<TrackerScreen> {
-  late GoogleMapController _controller;
   LatLng? _currentPosition;
-  bool _locationPermissionGranted = false;
   bool _isLoading = true;
-  bool _isTracking = false;
-  bool _simulateMovement = false;
-  Timer? _timer;
-  List<LatLng> _path = [];
-  double _totalDistance = 0.0;
-  String _mapStyle = '';
+
+  String _selectedActivity = 'Cycling';
+  int _kcal = 120;
 
   final LatLng _initialPosition = const LatLng(-6.200000, 106.816666);
   final SnackbarHelper _snackbarHelper = SnackbarHelper();
   final LocationService _locationService = LocationService();
+  late TrackingController _trackingController;
 
   @override
   void initState() {
     super.initState();
+    _trackingController = TrackingController(
+      locationService: _locationService,
+      snackbarHelper: _snackbarHelper,
+      onPositionUpdate: _updateMapView,
+    );
     _initializeTracker();
   }
 
   Future<void> _initializeTracker() async {
-    _mapStyle = await _loadMapStyle();
-    _locationPermissionGranted = await _locationService.checkLocationPermission();
-    if (_locationPermissionGranted) {
-      await _getUserLocation();
-      _startTrackingLocation();
-    } else {
-      _setLoading(false);
-    }
-  }
-
-  Future<String> _loadMapStyle() async {
-    return await rootBundle.loadString('assets/maps.json');
-  }
-
-  void _toggleTracking() async {
-    _isTracking ? _stopTracking() : await _startTracking();
-  }
-
-  Future<void> _startTracking() async {
-    if (_currentPosition == null) await _getUserLocation();
-    _isTracking = true;
-    _snackbarHelper.showSnackbar(context, 'Tracking started.');
-    _startTrackingLocation();
-    _animateCameraToPosition(_currentPosition!, 18.0);
-  }
-
-  void _stopTracking() {
-    _isTracking = false;
-    _simulateMovement = false;
-    _timer?.cancel();
-    _snackbarHelper.showSnackbar(context, 'Tracking stopped. Total distance: ${_totalDistance.toStringAsFixed(2)} meters.');
-    _animateCameraToPosition(_currentPosition!, 15.0);
-  }
-
-  void _startTrackingLocation() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _getUserLocation();
-    });
+    await _getUserLocation();
+    _trackingController.startTracking(context);
+    _setLoading(false);
   }
 
   Future<void> _getUserLocation() async {
-    try {
-      if (_simulateMovement) {
-        _simulateUserMovement();
-      } else {
-        Position position = await _locationService.getCurrentPosition();
-        _currentPosition = LatLng(position.latitude, position.longitude);
-      }
-
-      if (_isTracking && _currentPosition != null) {
-        _updatePathAndDistance(_currentPosition!);
-        _animateCameraToPosition(_currentPosition!, 18.0);
-      }
-
-      _setLoading(false);
-    } on TimeoutException {
-      _snackbarHelper.showSnackbar(context, 'Request for location timed out. Please try again.');
-    } catch (e) {
-      _snackbarHelper.handleError(context, e);
-    }
+    Position position = await _locationService.getCurrentPosition();
+    _currentPosition = LatLng(position.latitude, position.longitude);
   }
 
-  void _updatePathAndDistance(LatLng newPosition) {
-    _path.add(newPosition);
-    if (_path.length > 1) {
-      double distance = Geolocator.distanceBetween(
-        _path[_path.length - 2].latitude,
-        _path[_path.length - 2].longitude,
-        newPosition.latitude,
-        newPosition.longitude,
-      );
-      _totalDistance += distance;
-    }
-  }
-
-  void _animateCameraToPosition(LatLng position, double zoom) {
-    _controller.animateCamera(CameraUpdate.newLatLngZoom(position, zoom));
-  }
-
-  void _simulateUserMovement() {
-    _currentPosition = _currentPosition == null ? _initialPosition : LatLng(
-        _currentPosition!.latitude + 0.0001, _currentPosition!.longitude + 0.0001);
-  }
-
-  void _toggleSimulatedMovement() {
-    _simulateMovement = !_simulateMovement;
-    _snackbarHelper.showSnackbar(context, _simulateMovement ? 'Simulated movement started.' : 'Simulated movement stopped.');
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  void _setLoading(bool isLoading) {
+  void _updateMapView(LatLng newPosition) {
     setState(() {
-      _isLoading = isLoading;
+      _currentPosition = newPosition;
+    });
+  }
+
+  void _toggleTracking() {
+    if (_trackingController.isTracking) {
+      _trackingController.stopTracking(context);
+    } else {
+      _trackingController.startTracking(context);
+    }
+    setState(() {}); // Ensure UI is updated when tracking status changes
+  }
+
+  void _showActivitySelection() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return ActivitySelector(
+          onSelectActivity: _selectActivity,
+          selectedActivity: _selectedActivity,
+        );
+      },
+    );
+  }
+
+  void _selectActivity(String activity) {
+    setState(() {
+      _selectedActivity = activity;
+      _kcal = (activity == "Walking")
+          ? 60
+          : (activity == "Jogging")
+          ? 80
+          : 40;
     });
   }
 
@@ -144,78 +97,186 @@ class _TrackerScreenState extends State<TrackerScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Stack(
         children: [
-          GoogleMap(
-            onMapCreated: (GoogleMapController controller) {
-              _controller = controller;
-              _controller.setMapStyle(_mapStyle);
-              if (_currentPosition != null) {
-                _animateCameraToPosition(_currentPosition!, 15.0);
-              }
-            },
-            initialCameraPosition: CameraPosition(
-              target: _initialPosition,
-              zoom: 15.0,
-            ),
+          // Map View
+          MapView(
+            initialCameraPosition: _initialPosition,
+            currentPosition: _currentPosition,
             markers: _createMarkers(),
             polylines: _createPolylines(),
-            myLocationEnabled: _locationPermissionGranted,
-            myLocationButtonEnabled: true,
+            onMapCreated: (controller) {
+              // Additional actions on map creation
+            },
           ),
+          // Display meters moved and calories burned in the top-left corner
+          if (_trackingController.isTracking)
+            Positioned(
+              top: 30,
+              left: 16,
+              child: _buildDistanceMoved(),
+            ),
+          // Activity Info Display (history card)
+          Positioned(
+            bottom: 100,
+            left: 16,
+            right: 16,
+            child: _buildActivityInfo(),
+          ),
+          // Bottom buttons
           Positioned(
             bottom: 30,
-            left: 20,
-            right: 20,
+            left: 16,
+            right: 16,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.all(12),
+                // Expanded Start/Stop Session button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _toggleTracking,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pink,
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: Text(
+                      _trackingController.isTracking ? 'Stop Session' : 'Start Session',
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
-                  onPressed: _isTracking ? null : _toggleTracking,
-                  child: const Icon(Icons.play_arrow, color: Colors.white),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: const EdgeInsets.all(12),
-                  ),
-                  onPressed: _isTracking ? _stopTracking : null,
-                  child: const Icon(Icons.stop, color: Colors.white),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: const EdgeInsets.all(12),
-                  ),
-                  onPressed: _isTracking ? _toggleSimulatedMovement : null,
-                  child: const Icon(Icons.directions_run, color: Colors.white),
-                ),
+                // Show plus button only if not tracking
+                if (!_trackingController.isTracking)
+                  const SizedBox(width: 8), // Add space between buttons
+                if (!_trackingController.isTracking)
+                  Container(
+                    width: 60.0,
+                    height: 60.0,
+                    child: FloatingActionButton(
+                      onPressed: _showActivitySelection,
+                      backgroundColor: Colors.pink,
+                      child: const Icon(Icons.change_circle, color: Colors.white),
+                      shape: CircleBorder(),
+                    ),
+                  )
               ],
             ),
           ),
-          Positioned(
-            top: 30,
-            left: 20,
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
+        ],
+      ),
+    );
+  }
+
+  // Distance moved and calories burned display
+  Widget _buildDistanceMoved() {
+    double distanceInMeters = _trackingController.totalDistance;
+    double caloriesBurned = _calculateCaloriesBurned(distanceInMeters);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.accessibility_new, color: Colors.pink), // Running icon
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${distanceInMeters.toStringAsFixed(2)} meters",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+              Text(
+                "${caloriesBurned.toStringAsFixed(2)} kcal burned",
+                style: const TextStyle(fontSize: 14, color: Colors.black54), // Lighter text for calories
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Calculate calories burned based on distance and activity type
+  double _calculateCaloriesBurned(double distanceInMeters) {
+    double caloriesPerMeter;
+
+    switch (_selectedActivity) {
+      case 'Walking':
+        caloriesPerMeter = 0.06;
+        break;
+      case 'Jogging':
+        caloriesPerMeter = 0.08;
+        break;
+      case 'Cycling':
+        caloriesPerMeter = 0.04;
+        break;
+      default:
+        caloriesPerMeter = 0.06;
+    }
+
+    return distanceInMeters * caloriesPerMeter;
+  }
+
+  // History card with white background and pink text/icon
+  Widget _buildActivityInfo() {
+    DateTime now = DateTime.now(); // Get the current date
+    String formattedDate = DateFormat('EEE, MMM d | hh:mm a').format(now); // Format the date
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white, // Background is now white
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                _selectedActivity == 'Walking'
+                    ? Icons.directions_walk
+                    : _selectedActivity == 'Jogging'
+                    ? Icons.directions_run
+                    : Icons.directions_bike,
+                color: Colors.pink, // Icon is now pink
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _selectedActivity,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink), // Text is now pink
+                  ),
+                  Text(
+                    formattedDate, // Display the formatted date
+                    style: const TextStyle(fontSize: 14, color: Colors.black), // Text is black for visibility
                   ),
                 ],
               ),
-              child: Text(
-                'Total Distance: ${_totalDistance.toStringAsFixed(2)} m',
-                style: const TextStyle(fontSize: 16),
-              ),
-            ),
+            ],
+          ),
+          Text(
+            '$_kcal kkal/km',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.pink), // Kcal is now pink
           ),
         ],
       ),
@@ -224,27 +285,34 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   Set<Marker> _createMarkers() {
     return {
-      if (_currentPosition != null)
-        Marker(
-          markerId: const MarkerId('current_position'),
-          position: _currentPosition!,
-          infoWindow: const InfoWindow(
-            title: 'Your Location',
-            snippet: 'This is your current position!',
-          ),
-        ),
+      Marker(
+        markerId: const MarkerId('currentLocation'),
+        position: _currentPosition ?? _initialPosition,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+      ),
     };
   }
 
   Set<Polyline> _createPolylines() {
     return {
-      if (_path.isNotEmpty)
-        Polyline(
-          polylineId: const PolylineId('tracking_path'),
-          points: _path,
-          color: Colors.blue,
-          width: 5,
-        ),
+      Polyline(
+        polylineId: const PolylineId('path'),
+        points: _trackingController.path,
+        color: Colors.pink,
+        width: 4,
+      ),
     };
+  }
+
+  void _setLoading(bool isLoading) {
+    setState(() {
+      _isLoading = isLoading;
+    });
+  }
+
+  @override
+  void dispose() {
+    _trackingController.dispose();
+    super.dispose();
   }
 }

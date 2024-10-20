@@ -17,6 +17,13 @@ class NavigatorScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.splash);
+              },
+              child: const Text('Go to Splash Screen'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.home);
               },
               child: const Text('Go to Home Screen'),

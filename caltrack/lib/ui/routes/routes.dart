@@ -1,3 +1,4 @@
+import 'package:caltrack/splash.dart';
 import 'package:caltrack/ui/screens/challenge/challenge_screen.dart';
 import 'package:caltrack/ui/screens/exercise/tracker_screen.dart';
 import 'package:caltrack/ui/screens/food/capture_screen.dart';
@@ -16,13 +17,16 @@ class AppRoutes {
   static const String maps = '/maps-test';
 
   // Actual Page
+  static const String splash    = '/splash';
   static const String challenge = '/challenge';
-  static const String capture = '/capture';
-  static const String tracker = '/tracker';
+  static const String capture   = '/capture';
+  static const String tracker   = '/tracker';
 
   static Route<dynamic> generateRoute(
       RouteSettings settings, List<CameraDescription> cameras) {
     switch (settings.name) {
+      case splash:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case login:
