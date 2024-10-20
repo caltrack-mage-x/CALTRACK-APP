@@ -1,7 +1,5 @@
 import 'package:caltrack/domain/repository/conversation/message_repository.dart';
 
-import '../../repository/conversation/conversation_repository.dart';
-import '../../models/conversation/conversation_model.dart';
 
 class MessageService {
   final MessageRepository _messageRepository;

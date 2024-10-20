@@ -13,12 +13,12 @@ class UserAchievementsRepository {
 
     debugPrint('getAllUserAchievements Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No user achievements found.');
       throw Exception('No user achievements found.');
     }
 
-    return (response as List)
+    return (response)
         .map((userAchievement) =>
         UserAchievementsModel.fromJson(userAchievement))
         .toList();

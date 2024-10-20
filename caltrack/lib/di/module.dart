@@ -96,7 +96,7 @@ class Module {
 class DependencyProvider extends StatelessWidget {
   final Widget child;
 
-  DependencyProvider({required this.child});
+  const DependencyProvider({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

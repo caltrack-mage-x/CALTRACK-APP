@@ -13,12 +13,12 @@ class ExerciseRepository {
 
     debugPrint('getAllExercises Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No exercises found.');
       throw Exception('No exercises found.');
     }
 
-    return (response as List)
+    return (response)
         .map((exercise) => ExerciseModel.fromJson(exercise))
         .toList();
   }
@@ -28,11 +28,6 @@ class ExerciseRepository {
     await _client.from('Exercise').insert(exercise.toJson()).single();
 
     debugPrint('createExercise Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create exercise.');
-      throw Exception('Failed to create exercise.');
-    }
   }
 
   Future<void> updateExercise(ExerciseModel exercise) async {
@@ -43,11 +38,6 @@ class ExerciseRepository {
         .single();
 
     debugPrint('updateExercise Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update exercise.');
-      throw Exception('Failed to update exercise.');
-    }
   }
 
   Future<void> deleteExercise(String exerciseId) async {
@@ -58,10 +48,5 @@ class ExerciseRepository {
         .single();
 
     debugPrint('deleteExercise Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete exercise.');
-      throw Exception('Failed to delete exercise.');
-    }
   }
 }

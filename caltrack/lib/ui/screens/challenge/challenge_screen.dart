@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChallengePage extends StatefulWidget {
+  const ChallengePage({super.key});
+
   @override
   _ChallengePageState createState() => _ChallengePageState();
 }
@@ -53,7 +55,7 @@ class _ChallengePageState extends State<ChallengePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.0),
+        preferredSize: const Size.fromHeight(100.0),
         child: ChallengeTopBar(
           title: _getTitle(),
           currentIndex: _currentTabIndex,
@@ -68,11 +70,11 @@ class _ChallengePageState extends State<ChallengePage> {
         future: _loadData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator(color: Colors.orange,));
+            return const Center(child: CircularProgressIndicator(color: Colors.orange,));
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text("Failed to load data. Please try again later."));
+            return const Center(child: Text("Failed to load data. Please try again later."));
           }
 
           return SingleChildScrollView(
@@ -83,7 +85,7 @@ class _ChallengePageState extends State<ChallengePage> {
                 ChallengeTimer(
                   countdownType: _getCountdownType(_currentTabIndex),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildChallengesView(),
               ],
             ),
@@ -123,9 +125,9 @@ class _ChallengePageState extends State<ChallengePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ...challenges.map((challenge) => ChallengeCard(item: challenge)).toList(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -134,7 +136,7 @@ class _ChallengePageState extends State<ChallengePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Achievements", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text("Achievements", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ...achievements.map((achievement) => ChallengeCard(item: achievement)).toList(), // Assuming ChallengeCard can handle AchievementModel
       ],
     );

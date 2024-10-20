@@ -1,7 +1,5 @@
 import 'package:caltrack/domain/repository/exercise/exercise_repository.dart';
 
-import '../../repository/food/food_repository.dart';
-import '../../models/food/food_model.dart';
 
 class ExerciseService {
   final ExerciseRepository _foodRepository;

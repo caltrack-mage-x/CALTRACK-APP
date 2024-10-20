@@ -13,12 +13,12 @@ class UserAttachmentRepository {
 
     debugPrint('getAllUserAttachments Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No user attachments found.');
       throw Exception('No user attachments found.');
     }
 
-    return (response as List)
+    return (response)
         .map((attachment) => UserAttachmentModel.fromJson(attachment))
         .toList();
   }

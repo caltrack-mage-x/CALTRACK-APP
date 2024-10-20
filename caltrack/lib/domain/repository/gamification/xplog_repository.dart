@@ -13,12 +13,12 @@ class XPLogRepository {
 
     debugPrint('getAllXPLogs Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No XP logs found.');
       throw Exception('No XP logs found.');
     }
 
-    return (response as List)
+    return (response)
         .map((xpLog) => XPLogModel.fromJson(xpLog))
         .toList();
   }

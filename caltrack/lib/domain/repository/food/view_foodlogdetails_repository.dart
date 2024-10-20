@@ -13,12 +13,12 @@ class FoodLogDetailsRepository {
 
     debugPrint('getAllFoodLogs Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No food logs found.');
       throw Exception('No food logs found.');
     }
 
-    return (response as List)
+    return (response)
         .map((foodLog) => FoodLogDetailsModel.fromJson(foodLog))
         .toList();
   }

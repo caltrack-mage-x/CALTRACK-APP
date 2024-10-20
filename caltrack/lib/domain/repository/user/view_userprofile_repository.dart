@@ -13,12 +13,12 @@ class UserProfileRepository {
 
     debugPrint('getAllUserProfiles Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No user profiles found.');
       throw Exception('No user profiles found.');
     }
 
-    return (response as List)
+    return (response)
         .map((userProfile) => UserProfileModel.fromJson(userProfile))
         .toList();
   }

@@ -13,12 +13,12 @@ class UserAchievementRepository {
 
     debugPrint('getAllUserAchievements Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No user achievements found.');
       throw Exception('No user achievements found.');
     }
 
-    return (response as List)
+    return (response)
         .map((userAchievement) => UserAchievementModel.fromJson(userAchievement))
         .toList();
   }
@@ -30,11 +30,6 @@ class UserAchievementRepository {
         .single();
 
     debugPrint('createUserAchievement Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create user achievement.');
-      throw Exception('Failed to create user achievement.');
-    }
   }
 
   Future<void> updateUserAchievement(UserAchievementModel userAchievement) async {
@@ -45,11 +40,6 @@ class UserAchievementRepository {
         .single();
 
     debugPrint('updateUserAchievement Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update user achievement.');
-      throw Exception('Failed to update user achievement.');
-    }
   }
 
   Future<void> deleteUserAchievement(String userAchievementId) async {
@@ -60,10 +50,5 @@ class UserAchievementRepository {
         .single();
 
     debugPrint('deleteUserAchievement Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete user achievement.');
-      throw Exception('Failed to delete user achievement.');
-    }
   }
 }

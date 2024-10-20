@@ -26,7 +26,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
 
   Future<void> _analyzeImage() async {
     try {
-      await Gemini.reInitialize(apiKey: 'AIzaSyD-Fj0TBzjRze1rzOT3NTwSud5spAhlldk');
+      Gemini.reInitialize(apiKey: 'AIzaSyD-Fj0TBzjRze1rzOT3NTwSud5spAhlldk');
       final bytes = await File(widget.imagePath).readAsBytes();
 
       const prompt = '''
@@ -58,15 +58,15 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
         images: [bytes],
       );
 
-      if (recognitionResult?.content?.parts?.last?.text?.isNotEmpty ?? false) {
-        String jsonString = recognitionResult?.content?.parts?.last?.text ?? '';
+      if (recognitionResult?.content?.parts?.last.text?.isNotEmpty ?? false) {
+        String jsonString = recognitionResult?.content?.parts?.last.text ?? '';
 
         final descriptionResult = await Gemini.instance.textAndImage(
           text: "$descriptionPrompt $jsonString",
           images: [],
         );
 
-        String descriptionText = descriptionResult?.content?.parts?.last?.text ?? '';
+        String descriptionText = descriptionResult?.content?.parts?.last.text ?? '';
 
         setState(() {
           _foodDescription = descriptionText;
@@ -74,7 +74,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
       }
 
       final Map<String, dynamic>? jsonResult = jsonDecode(
-          recognitionResult?.content?.parts?.last?.text ?? '{}');
+          recognitionResult?.content?.parts?.last.text ?? '{}');
 
       if (jsonResult != null && jsonResult.isNotEmpty) {
         setState(() {
@@ -100,7 +100,29 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
           ? Center(child: Text(_errorMessage!))
           : _foodData != null
           ? _buildFoodDataView(_foodData!)
-          : const Center(child: CircularProgressIndicator()),
+          : _buildLoadingView(), // Use custom loading view
+    );
+  }
+
+  Widget _buildLoadingView() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFD4FD), Color(0xFFFAFFD8)],
+        ),
+      ),
+      child: const Center(
+        child: SizedBox(
+          width: 60,
+          height: 60,
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent), // Custom color
+            strokeWidth: 6, // Custom stroke width
+          ),
+        ),
+      ),
     );
   }
 
@@ -129,7 +151,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
             ),
             const SizedBox(height: 20),
             AspectRatio(
-              aspectRatio: 9 / 10,  // Maintain a proper aspect ratio
+              aspectRatio: 9 / 10,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(32),
                 child: Image.file(
@@ -142,7 +164,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
             Text(
               food.name.toUpperCase(),
               style: const TextStyle(
-                fontSize: 24,  // Increased font size for better emphasis
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -179,7 +201,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Color(0xFFEA6175),
+                color: const Color(0xFFEA6175),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(

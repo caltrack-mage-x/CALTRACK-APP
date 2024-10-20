@@ -13,12 +13,12 @@ class UserChallengesRepository {
 
     debugPrint('getAllUserChallenges Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No user challenges found.');
       throw Exception('No user challenges found.');
     }
 
-    return (response as List)
+    return (response)
         .map((userChallenge) => UserChallengesModel.fromJson(userChallenge))
         .toList();
   }

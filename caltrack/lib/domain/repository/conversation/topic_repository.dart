@@ -13,12 +13,12 @@ class TopicRepository {
 
     debugPrint('getAllTopics Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No topics found.');
       throw Exception('No topics found.');
     }
 
-    return (response as List)
+    return (response)
         .map((topic) => TopicModel.fromJson(topic))
         .toList();
   }
@@ -28,11 +28,6 @@ class TopicRepository {
     await _client.from('Topic').insert(topic.toJson()).single();
 
     debugPrint('createTopic Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create topic.');
-      throw Exception('Failed to create topic.');
-    }
   }
 
   Future<void> updateTopic(TopicModel topic) async {
@@ -43,11 +38,6 @@ class TopicRepository {
         .single();
 
     debugPrint('updateTopic Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update topic.');
-      throw Exception('Failed to update topic.');
-    }
   }
 
   Future<void> deleteTopic(String topicId) async {
@@ -58,10 +48,5 @@ class TopicRepository {
         .single();
 
     debugPrint('deleteTopic Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete topic.');
-      throw Exception('Failed to delete topic.');
-    }
   }
 }

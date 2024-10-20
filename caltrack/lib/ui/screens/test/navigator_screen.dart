@@ -2,11 +2,13 @@ import 'package:caltrack/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class NavigatorScreen extends StatelessWidget {
+  const NavigatorScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Navigator Screen'),
+        title: const Text('Navigator Screen'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -17,36 +19,36 @@ class NavigatorScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.home);
               },
-              child: Text('Go to Home Screen'),
+              child: const Text('Go to Home Screen'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.login);
               },
-              child: Text('Go to Login Screen'),
+              child: const Text('Go to Login Screen'),
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.maps);
               },
-              child: Text('Go to Maps Screen'),
+              child: const Text('Go to Maps Screen'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.challenge);
               },
-              child: Text('Go to Challenge Screen'),
+              child: const Text('Go to Challenge Screen'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.capture);
               },
-              child: Text('Go to Capture Screen'),
+              child: const Text('Go to Capture Screen'),
             ),
           ],
         ),

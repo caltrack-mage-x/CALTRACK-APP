@@ -13,12 +13,12 @@ class ExerciseLogDetailsRepository {
 
     debugPrint('getAllExerciseLogs Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No exercise logs found.');
       throw Exception('No exercise logs found.');
     }
 
-    return (response as List)
+    return (response)
         .map((exerciseLog) => ExerciseLogDetailsModel.fromJson(exerciseLog))
         .toList();
   }

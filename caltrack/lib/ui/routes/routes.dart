@@ -1,7 +1,5 @@
 import 'package:caltrack/ui/screens/challenge/challenge_screen.dart';
 import 'package:caltrack/ui/screens/food/capture_screen.dart';
-import 'package:caltrack/ui/screens/test/camera_screen.dart';
-import 'package:caltrack/ui/screens/test/gemini_screen.dart';
 import 'package:caltrack/ui/screens/test/home_screen.dart';
 import 'package:caltrack/ui/screens/test/login_screen.dart';
 import 'package:caltrack/ui/screens/test/navigator_screen.dart';
@@ -23,20 +21,21 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings, List<CameraDescription> cameras) {
     switch (settings.name) {
       case home:
-        return MaterialPageRoute(builder: (_) => HomeScreen());
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
       case login:
-        return MaterialPageRoute(builder: (_) => LoginScreen());
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
       case navigator:
-        return MaterialPageRoute(builder: (_) => NavigatorScreen());
+        return MaterialPageRoute(builder: (_) => const NavigatorScreen());
       case maps:
-        return MaterialPageRoute(builder: (_) => MapsScreen());
+        return MaterialPageRoute(builder: (_) => const MapsScreen());
       case challenge:
-        return MaterialPageRoute(builder: (_) => ChallengePage());
+        return MaterialPageRoute(builder: (_) => const ChallengePage());
       case capture:
         final firstCamera =  cameras.first;
-        return MaterialPageRoute(builder: (_) => CaptureScreen(camera: firstCamera));
+        final secondCamera = cameras.last;
+        return MaterialPageRoute(builder: (_) => CaptureScreen(firstCamera: firstCamera, secondCamera: secondCamera));
       default:
-        return MaterialPageRoute(builder: (_) => LoginScreen());
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
     }
   }
 }

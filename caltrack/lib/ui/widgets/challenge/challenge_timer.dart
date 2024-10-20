@@ -8,7 +8,7 @@ class ChallengeTimer extends StatefulWidget {
   final int currentMilestone;
   final int totalMilestones;
 
-  ChallengeTimer({
+  const ChallengeTimer({super.key, 
     required this.countdownType,
     this.currentMilestone = 0,
     this.totalMilestones = 40,
@@ -20,7 +20,7 @@ class ChallengeTimer extends StatefulWidget {
 
 class _ChallengeTimerState extends State<ChallengeTimer> {
   late Timer _timer;
-  Duration _remainingTime = Duration();
+  Duration _remainingTime = const Duration();
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _ChallengeTimerState extends State<ChallengeTimer> {
 
   void _startTimer() {
     _updateRemainingTime();
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       _updateRemainingTime();
     });
   }
@@ -92,9 +92,9 @@ class _ChallengeTimerState extends State<ChallengeTimer> {
   Widget _buildCountdownTimer() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [Color(0xFFFF7643), Color(0xFFFF516B)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -104,14 +104,14 @@ class _ChallengeTimerState extends State<ChallengeTimer> {
           BoxShadow(
             color: Colors.grey.withOpacity(0.4),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Time Left:',
             style: TextStyle(
               fontSize: 22,
@@ -119,10 +119,10 @@ class _ChallengeTimerState extends State<ChallengeTimer> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             _formatDuration(_remainingTime),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 42,
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -136,9 +136,9 @@ class _ChallengeTimerState extends State<ChallengeTimer> {
   Widget _buildAchievementMilestone() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [Color(0xFFFF7643), Color(0xFFFF516B)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -148,14 +148,14 @@ class _ChallengeTimerState extends State<ChallengeTimer> {
           BoxShadow(
             color: Colors.grey.withOpacity(0.4),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Your Milestone:',
             style: TextStyle(
               fontSize: 22,
@@ -163,10 +163,10 @@ class _ChallengeTimerState extends State<ChallengeTimer> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             '${widget.currentMilestone} / ${widget.totalMilestones}',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 42,
               color: Colors.white,
               fontWeight: FontWeight.bold,

@@ -13,12 +13,12 @@ class LeaderboardViewRepository {
 
     debugPrint('getAllLeaderboardEntries Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No leaderboard entries found.');
       throw Exception('No leaderboard entries found.');
     }
 
-    return (response as List)
+    return (response)
         .map((leaderboard) => LeaderboardViewModel.fromJson(leaderboard))
         .toList();
   }

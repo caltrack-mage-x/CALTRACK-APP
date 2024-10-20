@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class CameraScreen extends StatefulWidget {
+  const CameraScreen({super.key});
+
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
@@ -24,16 +26,16 @@ class _CameraScreenState extends State<CameraScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Camera'),
+        title: const Text('Camera'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _imageFile == null ? Text('No image selected.') : Image.file(_imageFile!),
+            _imageFile == null ? const Text('No image selected.') : Image.file(_imageFile!),
             ElevatedButton(
               onPressed: _takePicture,
-              child: Text('Take Picture'),
+              child: const Text('Take Picture'),
             ),
           ],
         ),

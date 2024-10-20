@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ChallengeCard extends StatelessWidget {
   final dynamic item;
 
-  ChallengeCard({required this.item});
+  const ChallengeCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class ChallengeCard extends StatelessWidget {
         print('Card tapped! $title');
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 8),
-        padding: EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -57,7 +57,7 @@ class ChallengeCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: item is ChallengeModel && item.isCompleted ? Colors.green[100] : Colors.grey[200],
                 borderRadius: BorderRadius.circular(8),
@@ -68,19 +68,19 @@ class ChallengeCard extends StatelessWidget {
                 size: 28,
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     description,
                     style: TextStyle(
@@ -94,7 +94,7 @@ class ChallengeCard extends StatelessWidget {
             if (goal.isNotEmpty) // Display goal only if it's not empty
               Text(
                 goal,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

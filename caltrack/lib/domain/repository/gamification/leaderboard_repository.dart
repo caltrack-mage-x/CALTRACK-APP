@@ -13,12 +13,12 @@ class LeaderboardRepository {
 
     debugPrint('getAllLeaderboards Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No leaderboards found.');
       throw Exception('No leaderboards found.');
     }
 
-    return (response as List)
+    return (response)
         .map((leaderboard) => LeaderboardModel.fromJson(leaderboard))
         .toList();
   }
@@ -30,11 +30,6 @@ class LeaderboardRepository {
         .single();
 
     debugPrint('createLeaderboard Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create leaderboard.');
-      throw Exception('Failed to create leaderboard.');
-    }
   }
 
   Future<void> updateLeaderboard(LeaderboardModel leaderboard) async {
@@ -45,11 +40,6 @@ class LeaderboardRepository {
         .single();
 
     debugPrint('updateLeaderboard Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update leaderboard.');
-      throw Exception('Failed to update leaderboard.');
-    }
   }
 
   Future<void> deleteLeaderboard(String leaderboardId) async {
@@ -60,10 +50,5 @@ class LeaderboardRepository {
         .single();
 
     debugPrint('deleteLeaderboard Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete leaderboard.');
-      throw Exception('Failed to delete leaderboard.');
-    }
   }
 }

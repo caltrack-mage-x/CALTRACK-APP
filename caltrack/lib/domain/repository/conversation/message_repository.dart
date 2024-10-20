@@ -13,12 +13,12 @@ class MessageRepository {
 
     debugPrint('getAllMessages Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No messages found.');
       throw Exception('No messages found.');
     }
 
-    return (response as List)
+    return (response)
         .map((message) => ConversationModel.fromJson(message))
         .toList();
   }
@@ -28,11 +28,6 @@ class MessageRepository {
     await _client.from('Message').insert(message.toJson()).single();
 
     debugPrint('createMessage Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create message.');
-      throw Exception('Failed to create message.');
-    }
   }
 
   Future<void> updateMessage(ConversationModel message) async {
@@ -43,11 +38,6 @@ class MessageRepository {
         .single();
 
     debugPrint('updateMessage Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update message.');
-      throw Exception('Failed to update message.');
-    }
   }
 
   Future<void> deleteMessage(String messageId) async {
@@ -58,10 +48,5 @@ class MessageRepository {
         .single();
 
     debugPrint('deleteMessage Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete message.');
-      throw Exception('Failed to delete message.');
-    }
   }
 }

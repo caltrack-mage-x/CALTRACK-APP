@@ -13,12 +13,12 @@ class UserRepository {
 
     debugPrint('getAllUsers Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No users found.');
       throw Exception('No users found.');
     }
 
-    return (response as List).map((user) => UserModel.fromJson(user)).toList();
+    return (response).map((user) => UserModel.fromJson(user)).toList();
   }
 
   Future<void> createUser(UserModel user) async {

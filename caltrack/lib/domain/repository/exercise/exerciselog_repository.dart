@@ -13,12 +13,12 @@ class ExerciseLogRepository {
 
     debugPrint('getAllExerciseLogs Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No exercise logs found.');
       throw Exception('No exercise logs found.');
     }
 
-    return (response as List)
+    return (response)
         .map((log) => ExerciseLogModel.fromJson(log))
         .toList();
   }
@@ -28,11 +28,6 @@ class ExerciseLogRepository {
     await _client.from('ExerciseLog').insert(log.toJson()).single();
 
     debugPrint('createExerciseLog Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create exercise log.');
-      throw Exception('Failed to create exercise log.');
-    }
   }
 
   Future<void> updateExerciseLog(ExerciseLogModel log) async {
@@ -43,11 +38,6 @@ class ExerciseLogRepository {
         .single();
 
     debugPrint('updateExerciseLog Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update exercise log.');
-      throw Exception('Failed to update exercise log.');
-    }
   }
 
   Future<void> deleteExerciseLog(String logId) async {
@@ -58,10 +48,5 @@ class ExerciseLogRepository {
         .single();
 
     debugPrint('deleteExerciseLog Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete exercise log.');
-      throw Exception('Failed to delete exercise log.');
-    }
   }
 }

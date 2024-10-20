@@ -13,12 +13,12 @@ class FoodAttachmentRepository {
 
     debugPrint('getAllFoodAttachments Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No food attachments found.');
       throw Exception('No food attachments found.');
     }
 
-    return (response as List)
+    return (response)
         .map((attachment) => FoodAttachmentModel.fromJson(attachment))
         .toList();
   }

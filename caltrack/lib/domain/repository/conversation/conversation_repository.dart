@@ -13,12 +13,12 @@ class ConversationRepository {
 
     debugPrint('getAllConversations Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No conversations found.');
       throw Exception('No conversations found.');
     }
 
-    return (response as List)
+    return (response)
         .map((conversation) => ConversationModel.fromJson(conversation))
         .toList();
   }
@@ -30,11 +30,6 @@ class ConversationRepository {
         .single();
 
     debugPrint('createConversation Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create conversation.');
-      throw Exception('Failed to create conversation.');
-    }
   }
 
   Future<void> updateConversation(ConversationModel conversation) async {
@@ -45,11 +40,6 @@ class ConversationRepository {
         .single();
 
     debugPrint('updateConversation Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update conversation.');
-      throw Exception('Failed to update conversation.');
-    }
   }
 
   Future<void> deleteConversation(String conversationId) async {
@@ -60,10 +50,5 @@ class ConversationRepository {
         .single();
 
     debugPrint('deleteConversation Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete conversation.');
-      throw Exception('Failed to delete conversation.');
-    }
   }
 }
