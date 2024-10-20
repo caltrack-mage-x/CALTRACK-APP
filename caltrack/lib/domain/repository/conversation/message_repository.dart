@@ -1,30 +1,33 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/conversation/message_model.dart';
 
-class ConversationRepository {
+class MessageRepository {
   final SupabaseClient _client;
 
-  ConversationRepository(this._client);
+  MessageRepository(this._client);
 
   Future<List<ConversationModel>> getAllMessages() async {
-    final response = await _client.from('Message').select().maybeSingle();
+    final response = await _client.from('Message').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllMessages Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No messages found.');
       throw Exception('No messages found.');
     }
 
-    return (response as List)
+    return (response)
         .map((message) => ConversationModel.fromJson(message))
         .toList();
   }
 
   Future<void> createMessage(ConversationModel message) async {
     final response =
-        await _client.from('Message').insert(message.toJson()).maybeSingle();
+    await _client.from('Message').insert(message.toJson()).single();
 
-    if (response == null) {
-      throw Exception('Failed to create message.');
-    }
+    debugPrint('createMessage Response: $response');
   }
 
   Future<void> updateMessage(ConversationModel message) async {
@@ -32,11 +35,9 @@ class ConversationRepository {
         .from('Message')
         .update(message.toJson())
         .eq('message_id', message.conversationId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to update message.');
-    }
+    debugPrint('updateMessage Response: $response');
   }
 
   Future<void> deleteMessage(String messageId) async {
@@ -44,10 +45,8 @@ class ConversationRepository {
         .from('Message')
         .delete()
         .eq('message_id', messageId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to delete message.');
-    }
+    debugPrint('deleteMessage Response: $response');
   }
 }

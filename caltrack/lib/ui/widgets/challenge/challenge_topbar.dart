@@ -5,7 +5,7 @@ class ChallengeTopBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTabChanged;
 
-  ChallengeTopBar({
+  const ChallengeTopBar({super.key, 
     required this.title,
     required this.currentIndex,
     required this.onTabChanged,
@@ -15,13 +15,13 @@ class ChallengeTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      padding: EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 8),
       child: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: Column(
           children: [
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Row(
@@ -34,7 +34,7 @@ class ChallengeTopBar extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
           ],
         )
 

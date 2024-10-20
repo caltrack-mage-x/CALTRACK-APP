@@ -1,5 +1,7 @@
+// Fixed
 import 'package:caltrack/domain/models/gamification/view_userchallange_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/cupertino.dart';
 
 class UserChallengesRepository {
   final SupabaseClient _client;
@@ -9,11 +11,14 @@ class UserChallengesRepository {
   Future<List<UserChallengesModel>> getAllUserChallenges() async {
     final response = await _client.from('user_challenges').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllUserChallenges Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No user challenges found.');
       throw Exception('No user challenges found.');
     }
 
-    return (response as List)
+    return (response)
         .map((userChallenge) => UserChallengesModel.fromJson(userChallenge))
         .toList();
   }

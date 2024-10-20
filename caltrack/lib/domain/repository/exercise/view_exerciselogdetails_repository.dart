@@ -1,5 +1,7 @@
+// Fixed
 import 'package:caltrack/domain/models/exercise/view_exerciselogdetails_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class ExerciseLogDetailsRepository {
   final SupabaseClient _client;
@@ -9,11 +11,14 @@ class ExerciseLogDetailsRepository {
   Future<List<ExerciseLogDetailsModel>> getAllExerciseLogs() async {
     final response = await _client.from('exercise_log_details').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllExerciseLogs Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No exercise logs found.');
       throw Exception('No exercise logs found.');
     }
 
-    return (response as List)
+    return (response)
         .map((exerciseLog) => ExerciseLogDetailsModel.fromJson(exerciseLog))
         .toList();
   }

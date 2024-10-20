@@ -1,4 +1,5 @@
 import 'package:caltrack/domain/repository/conversation/conversation_repository.dart';
+import 'package:caltrack/domain/repository/conversation/message_repository.dart';
 import 'package:caltrack/domain/repository/conversation/topic_repository.dart';
 import 'package:caltrack/domain/repository/exercise/exercise_repository.dart';
 import 'package:caltrack/domain/repository/exercise/exerciselog_repository.dart';
@@ -14,9 +15,11 @@ import 'package:caltrack/domain/repository/gamification/xplog_repository.dart';
 import 'package:caltrack/domain/repository/user/user_repository.dart';
 import 'package:caltrack/domain/repository/user/userattachment_repository.dart';
 import 'package:caltrack/domain/services/conversation/conversation_service.dart';
+import 'package:caltrack/domain/services/conversation/message_service.dart';
 import 'package:caltrack/domain/services/conversation/topic_service.dart';
 import 'package:caltrack/domain/services/exercise/exercise_service.dart';
 import 'package:caltrack/domain/services/exercise/exerciselog_service.dart';
+import 'package:caltrack/domain/services/food/food_service.dart';
 import 'package:caltrack/domain/services/food/foodattachment_service.dart';
 import 'package:caltrack/domain/services/food/foodlog_service.dart';
 import 'package:caltrack/domain/services/gamification/achievement_service.dart';
@@ -40,14 +43,14 @@ class Module {
   static ConversationRepository get conversationRepository => ConversationRepository(supabaseClient);
   static ConversationService get conversationService => ConversationService(conversationRepository);
 
-  // static MessageRepository get messageRepository => MessageRepository(supabaseClient);
-  // static MessageService get messageService => MessageService(messageRepository);
+  static MessageRepository get messageRepository => MessageRepository(supabaseClient);
+  static MessageService get messageService => MessageService(messageRepository);
 
   static TopicRepository get topicRepository => TopicRepository(supabaseClient);
   static TopicService get topicService => TopicService(topicRepository);
 
-  // static ExerciseRepository get exerciseRepository => ExerciseRepository(supabaseClient);
-  // static ExerciseService get exerciseService => ExerciseService(exerciseRepository);
+  static ExerciseRepository get exerciseRepository => ExerciseRepository(supabaseClient);
+  static ExerciseService get exerciseService => ExerciseService(exerciseRepository);
 
   static ExerciseLogRepository get exerciseLogRepository => ExerciseLogRepository(supabaseClient);
   static ExerciseLogService get exerciseLogService => ExerciseLogService(exerciseLogRepository);
@@ -93,16 +96,16 @@ class Module {
 class DependencyProvider extends StatelessWidget {
   final Widget child;
 
-  DependencyProvider({required this.child});
+  const DependencyProvider({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         Provider<ConversationService>(create: (_) => Module.conversationService),
-        // Provider<MessageService>(create: (_) => DependencyInjection.messageService),
+        Provider<MessageService>(create: (_) => Module.messageService),
         Provider<TopicService>(create: (_) => Module.topicService),
-        // Provider<ExerciseService>(create: (_) => DependencyInjection.exerciseService),
+        Provider<ExerciseService>(create: (_) => Module.exerciseService),
         Provider<ExerciseLogService>(create: (_) => Module.exerciseLogService),
         Provider<FoodService>(create: (_) => Module.foodService),
         Provider<FoodAttachmentService>(create: (_) => Module.foodAttachmentService),

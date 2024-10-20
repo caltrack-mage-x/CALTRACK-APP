@@ -56,7 +56,7 @@ List<ChallengeModel> createDummyChallenges() {
       goal: '0/7',
       type: 'Health',
       isCompleted: false,
-      createdAt: DateTime.now().subtract(Duration(days: 1)),
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
     ),
     ChallengeModel(
       challengeId: '3',
@@ -66,7 +66,7 @@ List<ChallengeModel> createDummyChallenges() {
       goal: '3/7',
       type: 'Mindfulness',
       isCompleted: true,
-      createdAt: DateTime.now().subtract(Duration(days: 3)),
+      createdAt: DateTime.now().subtract(const Duration(days: 3)),
     ),
     ChallengeModel(
       challengeId: '4',
@@ -76,7 +76,7 @@ List<ChallengeModel> createDummyChallenges() {
       goal: '10/35', // total servings over 7 days
       type: 'Nutrition',
       isCompleted: false,
-      createdAt: DateTime.now().subtract(Duration(days: 4)),
+      createdAt: DateTime.now().subtract(const Duration(days: 4)),
     ),
     ChallengeModel(
       challengeId: '5',
@@ -86,7 +86,7 @@ List<ChallengeModel> createDummyChallenges() {
       goal: '4/5',
       type: 'Wellness',
       isCompleted: false,
-      createdAt: DateTime.now().subtract(Duration(days: 5)),
+      createdAt: DateTime.now().subtract(const Duration(days: 5)),
     ),
     ChallengeModel(
       challengeId: '6',
@@ -96,7 +96,7 @@ List<ChallengeModel> createDummyChallenges() {
       goal: '1/3',
       type: 'Personal Development',
       isCompleted: true,
-      createdAt: DateTime.now().subtract(Duration(days: 10)),
+      createdAt: DateTime.now().subtract(const Duration(days: 10)),
     ),
     ChallengeModel(
       challengeId: '7',
@@ -106,7 +106,7 @@ List<ChallengeModel> createDummyChallenges() {
       goal: '0/4',
       type: 'Lifestyle',
       isCompleted: false,
-      createdAt: DateTime.now().subtract(Duration(days: 12)),
+      createdAt: DateTime.now().subtract(const Duration(days: 12)),
     ),
   ];
 }

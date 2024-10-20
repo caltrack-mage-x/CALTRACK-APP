@@ -1,16 +1,19 @@
-import 'package:caltrack/ui/screens/food/analyze_screen.dart';
+import 'package:caltrack/ui/screens/food/preview_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:caltrack/ui/screens/food/analyze_screen.dart';
+import 'dart:io';
 
 class CaptureScreen extends StatefulWidget {
   const CaptureScreen({
     super.key,
-    required this.camera,
+    required this.firstCamera,
+    required this.secondCamera,
   });
 
-  final CameraDescription camera;
+  final CameraDescription firstCamera;
+  final CameraDescription secondCamera;
 
   @override
   CaptureScreenState createState() => CaptureScreenState();
@@ -19,38 +22,43 @@ class CaptureScreen extends StatefulWidget {
 class CaptureScreenState extends State<CaptureScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
+  bool _isUsingFirstCamera = true;
 
   @override
   void initState() {
     super.initState();
-    _initializeCamera();
+    _initializeCamera(widget.firstCamera);
   }
 
-  Future<void> _initializeCamera() async {
+  Future<void> _initializeCamera(CameraDescription cameraDescription) async {
     _controller = CameraController(
-      widget.camera,
+      cameraDescription,
       ResolutionPreset.high,
     );
 
     _initializeControllerFuture = _controller.initialize().catchError((error) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Camera Error'),
-            content: Text('Error initializing camera: $error'),
-            actions: [
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      _showErrorDialog(error);
     });
+  }
+
+  void _showErrorDialog(Object error) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Camera Error'),
+          content: Text('Error initializing camera: $error'),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -67,11 +75,10 @@ class CaptureScreenState extends State<CaptureScreen> {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => AnalyzeScreen(imagePath: image.path),
+          builder: (context) => PreviewScreen(imagePath: image.path),
         ),
       );
     } catch (e) {
-      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error taking picture: $e')),
       );
@@ -84,58 +91,83 @@ class CaptureScreenState extends State<CaptureScreen> {
       if (pickedFile != null) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => AnalyzeScreen(imagePath: pickedFile.path),
+            builder: (context) => PreviewScreen(imagePath: pickedFile.path),
           ),
         );
       }
     } catch (e) {
-      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error picking image: $e')),
       );
     }
   }
 
+  void _rotateCamera() async {
+    setState(() {
+      _isUsingFirstCamera = !_isUsingFirstCamera;
+    });
+    await _initializeCamera(_isUsingFirstCamera ? widget.firstCamera : widget.secondCamera);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
+      body: Column(
         children: [
-          FutureBuilder<void>(
-            future: _initializeControllerFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return CameraPreview(_controller);
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.6),
-                  width: 2,
+          // Top bar
+          Container(
+            color: Colors.black,
+            padding: const EdgeInsets.only(top: 40, bottom: 10),
+            child: const Column(
+              children: [
+                Text(
+                  '🥕 CalTrack',
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
+                SizedBox(height: 5),
+                Text(
+                  'Powered by Google Gemini',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
             ),
           ),
-          Positioned(
-            bottom: 30,
-            left: 0,
-            right: 0,
+          Expanded(
+            child: FutureBuilder<void>(
+              future: _initializeControllerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Center(
+                    child: AspectRatio(
+                      aspectRatio: 3 / 4,
+                      child: CameraPreview(_controller),
+                    ),
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildBottomIcon(Icons.camera_alt, _takePicture, Colors.pinkAccent),
-                _buildBottomIcon(Icons.image, _pickFromGallery, Colors.teal),
-                _buildBottomIcon(Icons.close, () => Navigator.pop(context), Colors.red),
+                _buildBottomIcon(Icons.cameraswitch, _rotateCamera, [Colors.pinkAccent, Colors.purpleAccent]),
+                _buildBottomIcon(Icons.camera_alt, _takePicture, [Colors.redAccent, Colors.orangeAccent]),
+                _buildBottomIcon(Icons.image, _pickFromGallery, [Colors.teal, Colors.cyan]),
               ],
             ),
           ),
@@ -144,12 +176,20 @@ class CaptureScreenState extends State<CaptureScreen> {
     );
   }
 
-  Widget _buildBottomIcon(IconData icon, Function onPressed, Color backgroundColor) {
+  Widget _buildBottomIcon(IconData icon, Function onPressed, List<Color> gradientColors) {
     return InkWell(
       onTap: () => onPressed(),
-      child: CircleAvatar(
-        radius: 35,
-        backgroundColor: backgroundColor,
+      child: Container(
+        width: 70,
+        height: 70,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: Icon(
           icon,
           color: Colors.white,
@@ -159,5 +199,3 @@ class CaptureScreenState extends State<CaptureScreen> {
     );
   }
 }
-
-

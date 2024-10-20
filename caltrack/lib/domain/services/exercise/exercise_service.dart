@@ -1,24 +1,24 @@
-import '../../repository/food/food_repository.dart';
-import '../../models/food/food_model.dart';
+import 'package:caltrack/domain/repository/exercise/exercise_repository.dart';
 
-class FoodService {
-  final FoodRepository _foodRepository;
 
-  FoodService(this._foodRepository);
+class ExerciseService {
+  final ExerciseRepository _foodRepository;
 
-  Future<List<FoodModel>> getAllFoods() async {
-    return await _foodRepository.getAllFoods();
-  }
+  ExerciseService(this._foodRepository);
 
-  Future<void> createFood(FoodModel food) async {
-    await _foodRepository.createFood(food);
-  }
-
-  Future<void> updateFood(FoodModel food) async {
-    await _foodRepository.updateFood(food);
-  }
-
-  Future<void> deleteFood(String foodId) async {
-    await _foodRepository.deleteFood(foodId);
-  }
+  // Future<List<FoodModel>> getAllFoods() async {
+  //   return await _foodRepository.getAllFoods();
+  // }
+  //
+  // Future<void> createFood(FoodModel food) async {
+  //   await _foodRepository.createFood(food);
+  // }
+  //
+  // Future<void> updateFood(FoodModel food) async {
+  //   await _foodRepository.updateFood(food);
+  // }
+  //
+  // Future<void> deleteFood(String foodId) async {
+  //   await _foodRepository.deleteFood(foodId);
+  // }
 }

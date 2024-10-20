@@ -1,3 +1,5 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/exercise/exercise_model.dart';
 
@@ -7,24 +9,25 @@ class ExerciseRepository {
   ExerciseRepository(this._client);
 
   Future<List<ExerciseModel>> getAllExercises() async {
-    final response = await _client.from('Exercise').select().maybeSingle();
+    final response = await _client.from('Exercise').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllExercises Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No exercises found.');
       throw Exception('No exercises found.');
     }
 
-    return (response as List)
+    return (response)
         .map((exercise) => ExerciseModel.fromJson(exercise))
         .toList();
   }
 
   Future<void> createExercise(ExerciseModel exercise) async {
     final response =
-        await _client.from('Exercise').insert(exercise.toJson()).maybeSingle();
+    await _client.from('Exercise').insert(exercise.toJson()).single();
 
-    if (response == null) {
-      throw Exception('Failed to create exercise.');
-    }
+    debugPrint('createExercise Response: $response');
   }
 
   Future<void> updateExercise(ExerciseModel exercise) async {
@@ -32,11 +35,9 @@ class ExerciseRepository {
         .from('Exercise')
         .update(exercise.toJson())
         .eq('exercise_id', exercise.exerciseId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to update exercise.');
-    }
+    debugPrint('updateExercise Response: $response');
   }
 
   Future<void> deleteExercise(String exerciseId) async {
@@ -44,10 +45,8 @@ class ExerciseRepository {
         .from('Exercise')
         .delete()
         .eq('exercise_id', exerciseId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to delete exercise.');
-    }
+    debugPrint('deleteExercise Response: $response');
   }
 }

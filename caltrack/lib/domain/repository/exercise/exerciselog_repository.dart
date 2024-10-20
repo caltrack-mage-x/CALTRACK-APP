@@ -1,3 +1,5 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/exercise/exerciselog_model.dart';
 
@@ -7,24 +9,25 @@ class ExerciseLogRepository {
   ExerciseLogRepository(this._client);
 
   Future<List<ExerciseLogModel>> getAllExerciseLogs() async {
-    final response = await _client.from('ExerciseLog').select().maybeSingle();
+    final response = await _client.from('ExerciseLog').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllExerciseLogs Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No exercise logs found.');
       throw Exception('No exercise logs found.');
     }
 
-    return (response as List)
+    return (response)
         .map((log) => ExerciseLogModel.fromJson(log))
         .toList();
   }
 
   Future<void> createExerciseLog(ExerciseLogModel log) async {
     final response =
-        await _client.from('ExerciseLog').insert(log.toJson()).maybeSingle();
+    await _client.from('ExerciseLog').insert(log.toJson()).single();
 
-    if (response == null) {
-      throw Exception('Failed to create exercise log.');
-    }
+    debugPrint('createExerciseLog Response: $response');
   }
 
   Future<void> updateExerciseLog(ExerciseLogModel log) async {
@@ -32,11 +35,9 @@ class ExerciseLogRepository {
         .from('ExerciseLog')
         .update(log.toJson())
         .eq('log_id', log.logId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to update exercise log.');
-    }
+    debugPrint('updateExerciseLog Response: $response');
   }
 
   Future<void> deleteExerciseLog(String logId) async {
@@ -44,10 +45,8 @@ class ExerciseLogRepository {
         .from('ExerciseLog')
         .delete()
         .eq('log_id', logId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to delete exercise log.');
-    }
+    debugPrint('deleteExerciseLog Response: $response');
   }
 }

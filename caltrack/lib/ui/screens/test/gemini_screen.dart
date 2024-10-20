@@ -3,6 +3,8 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:image_picker/image_picker.dart';
 
 class GeminiScreen extends StatefulWidget {
+  const GeminiScreen({super.key});
+
   @override
   _GeminiScreenState createState() => _GeminiScreenState();
 }
@@ -18,7 +20,7 @@ class _GeminiScreenState extends State<GeminiScreen> {
   }
 
   Future<void> initializeGemini() async {
-    await Gemini.reInitialize(apiKey: 'AIzaSyD-Fj0TBzjRze1rzOT3NTwSud5spAhlldk');
+    Gemini.reInitialize(apiKey: 'AIzaSyD-Fj0TBzjRze1rzOT3NTwSud5spAhlldk');
   }
 
   Future<void> _pickImage() async {
@@ -34,7 +36,7 @@ class _GeminiScreenState extends State<GeminiScreen> {
         );
 
         setState(() {
-          _result = recognitionResult?.content?.parts?.last?.text ?? 'No result';
+          _result = recognitionResult?.content?.parts?.last.text ?? 'No result';
         });
       } catch (e) {
         setState(() {
@@ -48,7 +50,7 @@ class _GeminiScreenState extends State<GeminiScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gemini Image Recognition'),
+        title: const Text('Gemini Image Recognition'),
       ),
       body: Center(
         child: Column(
@@ -56,11 +58,11 @@ class _GeminiScreenState extends State<GeminiScreen> {
           children: [
             ElevatedButton(
               onPressed: _pickImage,
-              child: Text('Pick Image'),
+              child: const Text('Pick Image'),
             ),
             if (_result != null) ...[
-              SizedBox(height: 20),
-              Text('Recognition Result:'),
+              const SizedBox(height: 20),
+              const Text('Recognition Result:'),
               Text(_result!),
             ],
           ],

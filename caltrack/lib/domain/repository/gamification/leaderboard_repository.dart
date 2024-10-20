@@ -1,5 +1,7 @@
+// Fixed
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/gamification/leaderboard_model.dart';
+import 'package:flutter/cupertino.dart';
 
 class LeaderboardRepository {
   final SupabaseClient _client;
@@ -7,13 +9,16 @@ class LeaderboardRepository {
   LeaderboardRepository(this._client);
 
   Future<List<LeaderboardModel>> getAllLeaderboards() async {
-    final response = await _client.from('Leaderboard').select().maybeSingle();
+    final response = await _client.from('Leaderboard').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllLeaderboards Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No leaderboards found.');
       throw Exception('No leaderboards found.');
     }
 
-    return (response as List)
+    return (response)
         .map((leaderboard) => LeaderboardModel.fromJson(leaderboard))
         .toList();
   }
@@ -22,11 +27,9 @@ class LeaderboardRepository {
     final response = await _client
         .from('Leaderboard')
         .insert(leaderboard.toJson())
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to create leaderboard.');
-    }
+    debugPrint('createLeaderboard Response: $response');
   }
 
   Future<void> updateLeaderboard(LeaderboardModel leaderboard) async {
@@ -34,11 +37,9 @@ class LeaderboardRepository {
         .from('Leaderboard')
         .update(leaderboard.toJson())
         .eq('leaderboard_id', leaderboard.leaderboardId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to update leaderboard.');
-    }
+    debugPrint('updateLeaderboard Response: $response');
   }
 
   Future<void> deleteLeaderboard(String leaderboardId) async {
@@ -46,10 +47,8 @@ class LeaderboardRepository {
         .from('Leaderboard')
         .delete()
         .eq('leaderboard_id', leaderboardId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to delete leaderboard.');
-    }
+    debugPrint('deleteLeaderboard Response: $response');
   }
 }

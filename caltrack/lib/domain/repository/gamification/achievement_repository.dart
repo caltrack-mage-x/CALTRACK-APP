@@ -12,12 +12,12 @@ class AchievementRepository {
 
     debugPrint('getAllAchievements Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No achievements found.');
       throw Exception('No achievements found.');
     }
 
-    return (response as List)
+    return (response)
         .map((achievement) => AchievementModel.fromJson(achievement))
         .toList();
   }
@@ -29,11 +29,6 @@ class AchievementRepository {
         .single();
 
     debugPrint('createAchievement Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create achievement.');
-      throw Exception('Failed to create achievement.');
-    }
   }
 
   Future<void> updateAchievement(AchievementModel achievement) async {
@@ -44,11 +39,6 @@ class AchievementRepository {
         .single();
 
     debugPrint('updateAchievement Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update achievement.');
-      throw Exception('Failed to update achievement.');
-    }
   }
 
   Future<void> deleteAchievement(String achievementId) async {
@@ -59,10 +49,5 @@ class AchievementRepository {
         .single();
 
     debugPrint('deleteAchievement Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete achievement.');
-      throw Exception('Failed to delete achievement.');
-    }
   }
 }

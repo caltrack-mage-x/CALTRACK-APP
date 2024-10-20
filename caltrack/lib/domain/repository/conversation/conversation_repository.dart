@@ -1,3 +1,5 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/conversation/conversation_model.dart';
 
@@ -7,13 +9,16 @@ class ConversationRepository {
   ConversationRepository(this._client);
 
   Future<List<ConversationModel>> getAllConversations() async {
-    final response = await _client.from('Conversation').select().maybeSingle();
+    final response = await _client.from('Conversation').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllConversations Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No conversations found.');
       throw Exception('No conversations found.');
     }
 
-    return (response as List)
+    return (response)
         .map((conversation) => ConversationModel.fromJson(conversation))
         .toList();
   }
@@ -22,11 +27,9 @@ class ConversationRepository {
     final response = await _client
         .from('Conversation')
         .insert(conversation.toJson())
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to create conversation.');
-    }
+    debugPrint('createConversation Response: $response');
   }
 
   Future<void> updateConversation(ConversationModel conversation) async {
@@ -34,11 +37,9 @@ class ConversationRepository {
         .from('Conversation')
         .update(conversation.toJson())
         .eq('conversation_id', conversation.conversationId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to update conversation.');
-    }
+    debugPrint('updateConversation Response: $response');
   }
 
   Future<void> deleteConversation(String conversationId) async {
@@ -46,10 +47,8 @@ class ConversationRepository {
         .from('Conversation')
         .delete()
         .eq('conversation_id', conversationId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to delete conversation.');
-    }
+    debugPrint('deleteConversation Response: $response');
   }
 }

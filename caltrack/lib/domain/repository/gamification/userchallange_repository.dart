@@ -1,5 +1,7 @@
+// Fixed
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/gamification/userchallange_model.dart';
+import 'package:flutter/cupertino.dart';
 
 class UserChallengeRepository {
   final SupabaseClient _client;
@@ -7,13 +9,16 @@ class UserChallengeRepository {
   UserChallengeRepository(this._client);
 
   Future<List<UserChallengeModel>> getAllUserChallenges() async {
-    final response = await _client.from('UserChallenge').select().maybeSingle();
+    final response = await _client.from('UserChallenge').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllUserChallenges Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No user challenges found.');
       throw Exception('No user challenges found.');
     }
 
-    return (response as List)
+    return (response)
         .map((userChallenge) => UserChallengeModel.fromJson(userChallenge))
         .toList();
   }
@@ -22,11 +27,9 @@ class UserChallengeRepository {
     final response = await _client
         .from('UserChallenge')
         .insert(userChallenge.toJson())
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to create user challenge.');
-    }
+    debugPrint('createUserChallenge Response: $response');
   }
 
   Future<void> updateUserChallenge(UserChallengeModel userChallenge) async {
@@ -34,11 +37,9 @@ class UserChallengeRepository {
         .from('UserChallenge')
         .update(userChallenge.toJson())
         .eq('user_challenge_id', userChallenge.userChallengeId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to update user challenge.');
-    }
+    debugPrint('updateUserChallenge Response: $response');
   }
 
   Future<void> deleteUserChallenge(String userChallengeId) async {
@@ -46,10 +47,8 @@ class UserChallengeRepository {
         .from('UserChallenge')
         .delete()
         .eq('user_challenge_id', userChallengeId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to delete user challenge.');
-    }
+    debugPrint('deleteUserChallenge Response: $response');
   }
 }

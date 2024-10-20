@@ -12,12 +12,12 @@ class ChallengeRepository {
 
     debugPrint('getAllChallenges Response: $response');
 
-    if (response == null || (response as List).isEmpty) {
+    if ((response).isEmpty) {
       debugPrint('No challenges found.');
       throw Exception('No challenges found.');
     }
 
-    return (response as List)
+    return (response)
         .map((challenge) => ChallengeModel.fromJson(challenge))
         .toList();
   }
@@ -29,11 +29,6 @@ class ChallengeRepository {
         .single();
 
     debugPrint('createChallenge Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to create challenge.');
-      throw Exception('Failed to create challenge.');
-    }
   }
 
   Future<void> updateChallenge(ChallengeModel challenge) async {
@@ -44,11 +39,6 @@ class ChallengeRepository {
         .single();
 
     debugPrint('updateChallenge Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to update challenge.');
-      throw Exception('Failed to update challenge.');
-    }
   }
 
   Future<void> deleteChallenge(String challengeId) async {
@@ -59,10 +49,5 @@ class ChallengeRepository {
         .single();
 
     debugPrint('deleteChallenge Response: $response');
-
-    if (response == null) {
-      debugPrint('Failed to delete challenge.');
-      throw Exception('Failed to delete challenge.');
-    }
   }
 }

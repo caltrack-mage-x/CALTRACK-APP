@@ -1,3 +1,5 @@
+// Fixed
+import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/conversation/topic_model.dart';
 
@@ -7,24 +9,25 @@ class TopicRepository {
   TopicRepository(this._client);
 
   Future<List<TopicModel>> getAllTopics() async {
-    final response = await _client.from('Topic').select().maybeSingle();
+    final response = await _client.from('Topic').select();
 
-    if (response == null || (response as List).isEmpty) {
+    debugPrint('getAllTopics Response: $response');
+
+    if ((response).isEmpty) {
+      debugPrint('No topics found.');
       throw Exception('No topics found.');
     }
 
-    return (response as List)
+    return (response)
         .map((topic) => TopicModel.fromJson(topic))
         .toList();
   }
 
   Future<void> createTopic(TopicModel topic) async {
     final response =
-        await _client.from('Topic').insert(topic.toJson()).maybeSingle();
+    await _client.from('Topic').insert(topic.toJson()).single();
 
-    if (response == null) {
-      throw Exception('Failed to create topic.');
-    }
+    debugPrint('createTopic Response: $response');
   }
 
   Future<void> updateTopic(TopicModel topic) async {
@@ -32,11 +35,9 @@ class TopicRepository {
         .from('Topic')
         .update(topic.toJson())
         .eq('topic_id', topic.topicId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to update topic.');
-    }
+    debugPrint('updateTopic Response: $response');
   }
 
   Future<void> deleteTopic(String topicId) async {
@@ -44,10 +45,8 @@ class TopicRepository {
         .from('Topic')
         .delete()
         .eq('topic_id', topicId)
-        .maybeSingle();
+        .single();
 
-    if (response == null) {
-      throw Exception('Failed to delete topic.');
-    }
+    debugPrint('deleteTopic Response: $response');
   }
 }
