@@ -15,7 +15,7 @@ class MapView extends StatefulWidget {
 
   const MapView({
     Key? key,
-    required this.initialCameraPosition,  // Change this
+    required this.initialCameraPosition,
     required this.currentPosition,
     required this.markers,
     required this.polylines,
@@ -28,6 +28,19 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   late GoogleMapController _controller;
+  late LatLng _cameraPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _cameraPosition = widget.currentPosition ?? widget.initialCameraPosition;
+    _loadMapStyle();
+  }
+
+  Future<void> _loadMapStyle() async {
+    String style = await rootBundle.loadString('assets/maps.json');
+    _controller.setMapStyle(style);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +48,15 @@ class _MapViewState extends State<MapView> {
       onMapCreated: (GoogleMapController controller) {
         _controller = controller;
         widget.onMapCreated(_controller);
+        _loadMapStyle();
         if (widget.currentPosition != null) {
           _animateCameraToPosition(widget.currentPosition!, 15.0);
         }
       },
       initialCameraPosition: CameraPosition(
-        target: widget.initialCameraPosition,  // Change this
+        target: _cameraPosition,
         zoom: 15.0,
       ),
-      markers: widget.markers,
       polylines: widget.polylines,
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
@@ -52,5 +65,13 @@ class _MapViewState extends State<MapView> {
 
   void _animateCameraToPosition(LatLng position, double zoom) {
     _controller.animateCamera(CameraUpdate.newLatLngZoom(position, zoom));
+    setState(() {
+      _cameraPosition = position;
+    });
+  }
+
+  void updateCameraPosition(LatLng position, double zoom) {
+    _animateCameraToPosition(position, zoom);
   }
 }
+

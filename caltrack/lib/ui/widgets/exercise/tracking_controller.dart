@@ -9,7 +9,7 @@ import 'package:caltrack/ui/widgets/exercise/snackbar_helper.dart';
 class TrackingController {
   bool isTracking = false;
   bool simulateMovement = true;
-  LatLng? currentPosition;
+  LatLng currentPosition;
   List<LatLng> path = [];
   double totalDistance = 0.0;
   Timer? timer;
@@ -22,6 +22,7 @@ class TrackingController {
     required this.locationService,
     required this.snackbarHelper,
     required this.onPositionUpdate,
+    required this.currentPosition
   });
 
   Future<void> startTracking(BuildContext context) async {
@@ -52,30 +53,42 @@ class TrackingController {
       currentPosition = LatLng(position.latitude, position.longitude);
     }
 
-    if (isTracking && currentPosition != null) {
-      updatePathAndDistance(currentPosition!);
-      onPositionUpdate(currentPosition!);
+    if (isTracking) {
+      updatePathAndDistance(currentPosition);
+      onPositionUpdate(currentPosition);
     }
   }
 
   void updatePathAndDistance(LatLng newPosition) {
-    path.add(newPosition);
-    if (path.length > 1) {
-      double distance = Geolocator.distanceBetween(
-        path[path.length - 2].latitude,
-        path[path.length - 2].longitude,
-        newPosition.latitude,
-        newPosition.longitude,
-      );
-      totalDistance += distance;
+    if(
+        newPosition.latitude != -7.966620 &&
+        newPosition.longitude != 112.632632
+    ){
+      path.add(newPosition);
+      if (path.length > 1) {
+        double distance = Geolocator.distanceBetween(
+          path[path.length - 2].latitude,
+          path[path.length - 2].longitude,
+          newPosition.latitude,
+          newPosition.longitude,
+        );
+        totalDistance += distance;
+      }
     }
   }
 
   void simulateUserMovement() {
-    currentPosition = currentPosition == null
-        ? const LatLng(-6.200000, 106.816666)
-        : LatLng(currentPosition!.latitude + 0.0001, currentPosition!.longitude + 0.0001);
+    double latChange = (0.00005) * (1 + (path.length % 2 == 0 ? -1 : 1));
+    double lngChange = (0.00005) * (1 + (path.length % 3 == 0 ? -1 : 1));
+
+    currentPosition = LatLng(
+      currentPosition.latitude + latChange,
+      currentPosition.longitude + lngChange,
+    );
+
+    updatePathAndDistance(currentPosition);
   }
+
 
   void toggleSimulatedMovement(BuildContext context) {
     simulateMovement = !simulateMovement;

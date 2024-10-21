@@ -44,7 +44,7 @@ class AppRoutes {
             builder: (_) => CaptureScreen(
                 firstCamera: firstCamera, secondCamera: secondCamera));
       case tracker:
-        return MaterialPageRoute(builder: (_) => const TrackerScreen());
+        return MaterialPageRoute(builder: (_) => TrackerScreen());
       default:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
     }

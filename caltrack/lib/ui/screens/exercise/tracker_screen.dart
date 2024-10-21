@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:caltrack/ui/widgets/exercise/activity_selector.dart';
 import 'package:caltrack/ui/widgets/exercise/map_view.dart';
 import 'package:caltrack/ui/widgets/exercise/tracking_controller.dart';
@@ -19,51 +20,74 @@ class TrackerScreen extends StatefulWidget {
 
 class _TrackerScreenState extends State<TrackerScreen> {
   LatLng? _currentPosition;
-  bool _isLoading = true;
 
   String _selectedActivity = 'Cycling';
   int _kcal = 120;
 
-  final LatLng _initialPosition = const LatLng(-6.200000, 106.816666);
+  final LatLng _initialPosition = const LatLng(-7.966620, 112.632632);
   final SnackbarHelper _snackbarHelper = SnackbarHelper();
   final LocationService _locationService = LocationService();
   late TrackingController _trackingController;
 
+  GoogleMapController? _mapController;
+
   @override
   void initState() {
     super.initState();
+    _getUserLocation();
     _trackingController = TrackingController(
       locationService: _locationService,
       snackbarHelper: _snackbarHelper,
       onPositionUpdate: _updateMapView,
+      currentPosition: _currentPosition ?? _initialPosition
     );
-    _initializeTracker();
-  }
-
-  Future<void> _initializeTracker() async {
-    await _getUserLocation();
-    _trackingController.startTracking(context);
-    _setLoading(false);
   }
 
   Future<void> _getUserLocation() async {
     Position position = await _locationService.getCurrentPosition();
     _currentPosition = LatLng(position.latitude, position.longitude);
+    _updateMapView(_currentPosition ?? _initialPosition, 15);
   }
 
-  void _updateMapView(LatLng newPosition) {
+  void _updateMapView(LatLng newPosition, double newZoom) {
     setState(() {
+      if(
+        _currentPosition?.latitude  != _initialPosition.latitude &&
+        _currentPosition?.longitude != _initialPosition.longitude
+      ){
+        _trackingController.updatePathAndDistance(newPosition);
+      }
       _currentPosition = newPosition;
     });
+
+    if (_mapController != null) {
+      _mapController!.animateCamera(
+        CameraUpdate.newLatLngZoom(newPosition, newZoom),
+      );
+    }
   }
+
+  Set<Polyline> _createPolylines() {
+    return {
+      Polyline(
+        polylineId: const PolylineId('path'),
+        points: _trackingController.path,
+        color: Colors.pink,
+        width: 4,
+      ),
+    };
+  }
+
 
   void _toggleTracking() {
     if (_trackingController.isTracking) {
       _trackingController.stopTracking(context);
+      _updateMapView(_currentPosition ?? _initialPosition, 15);
     } else {
       _trackingController.startTracking(context);
+      _updateMapView(_currentPosition ?? _initialPosition, 18);
     }
-    setState(() {}); // Ensure UI is updated when tracking status changes
+    setState(() {});
   }
 
   void _showActivitySelection() {
@@ -93,9 +117,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
+      body: Stack(
         children: [
           // Map View
           MapView(
@@ -104,17 +126,15 @@ class _TrackerScreenState extends State<TrackerScreen> {
             markers: _createMarkers(),
             polylines: _createPolylines(),
             onMapCreated: (controller) {
-              // Additional actions on map creation
+              _mapController = controller; // Capture the map controller
             },
           ),
-          // Display meters moved and calories burned in the top-left corner
           if (_trackingController.isTracking)
             Positioned(
               top: 30,
               left: 16,
               child: _buildDistanceMoved(),
             ),
-          // Activity Info Display (history card)
           Positioned(
             bottom: 100,
             left: 16,
@@ -128,7 +148,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
             right: 16,
             child: Row(
               children: [
-                // Expanded Start/Stop Session button
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _toggleTracking,
@@ -143,9 +162,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
                     ),
                   ),
                 ),
-                // Show plus button only if not tracking
                 if (!_trackingController.isTracking)
-                  const SizedBox(width: 8), // Add space between buttons
+                  const SizedBox(width: 8),
                 if (!_trackingController.isTracking)
                   Container(
                     width: 60.0,
@@ -154,9 +172,9 @@ class _TrackerScreenState extends State<TrackerScreen> {
                       onPressed: _showActivitySelection,
                       backgroundColor: Colors.pink,
                       child: const Icon(Icons.change_circle, color: Colors.white),
-                      shape: CircleBorder(),
+                      shape: const CircleBorder(),
                     ),
-                  )
+                  ),
               ],
             ),
           ),
@@ -165,7 +183,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
     );
   }
 
-  // Distance moved and calories burned display
   Widget _buildDistanceMoved() {
     double distanceInMeters = _trackingController.totalDistance;
     double caloriesBurned = _calculateCaloriesBurned(distanceInMeters);
@@ -196,7 +213,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
               ),
               Text(
                 "${caloriesBurned.toStringAsFixed(2)} kcal burned",
-                style: const TextStyle(fontSize: 14, color: Colors.black54), // Lighter text for calories
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
               ),
             ],
           ),
@@ -205,7 +222,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
     );
   }
 
-  // Calculate calories burned based on distance and activity type
   double _calculateCaloriesBurned(double distanceInMeters) {
     double caloriesPerMeter;
 
@@ -226,7 +242,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
     return distanceInMeters * caloriesPerMeter;
   }
 
-  // History card with white background and pink text/icon
   Widget _buildActivityInfo() {
     DateTime now = DateTime.now(); // Get the current date
     String formattedDate = DateFormat('EEE, MMM d | hh:mm a').format(now); // Format the date
@@ -234,7 +249,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white, // Background is now white
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: const [
           BoxShadow(
@@ -255,7 +270,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
                     : _selectedActivity == 'Jogging'
                     ? Icons.directions_run
                     : Icons.directions_bike,
-                color: Colors.pink, // Icon is now pink
+                color: Colors.pink,
               ),
               const SizedBox(width: 8),
               Column(
@@ -264,11 +279,11 @@ class _TrackerScreenState extends State<TrackerScreen> {
                   Text(
                     _selectedActivity,
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink), // Text is now pink
+                        fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink),
                   ),
                   Text(
-                    formattedDate, // Display the formatted date
-                    style: const TextStyle(fontSize: 14, color: Colors.black), // Text is black for visibility
+                    formattedDate,
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
                   ),
                 ],
               ),
@@ -276,7 +291,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
           ),
           Text(
             '$_kcal kkal/km',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.pink), // Kcal is now pink
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.pink),
           ),
         ],
       ),
@@ -291,23 +306,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       ),
     };
-  }
-
-  Set<Polyline> _createPolylines() {
-    return {
-      Polyline(
-        polylineId: const PolylineId('path'),
-        points: _trackingController.path,
-        color: Colors.pink,
-        width: 4,
-      ),
-    };
-  }
-
-  void _setLoading(bool isLoading) {
-    setState(() {
-      _isLoading = isLoading;
-    });
   }
 
   @override
