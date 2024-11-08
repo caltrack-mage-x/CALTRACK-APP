@@ -8,7 +8,7 @@ import 'package:caltrack/ui/screens/test/navigator_screen.dart';
 import 'package:caltrack/ui/screens/test/maps_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
+import 'package:caltrack/ui/screens/profil/profil_screen.dart';
 class AppRoutes {
   // Test Page
   static const String home = '/home-test';

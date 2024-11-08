@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: AppRoutes.navigator,
         onGenerateRoute: (settings) => AppRoutes.generateRoute(settings, cameras),
-      ),
-    );
-  }
+     ),
+);
+}
 }

@@ -40,6 +40,12 @@ flutter:
     - assets/StartJourney.png
     - assets/WakeUpWorkout.png
     - assets/LoginBackground.png
+    - assets/fireBurn.png
+    - assets/fried_rice.png
+    - assets/DailyChallenge.png
+    - assets/WeeklyChallenge.png
+    - assets/Achievement.png
+    - assets/BircycleBurn.png
     - assets/caltrack-icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
