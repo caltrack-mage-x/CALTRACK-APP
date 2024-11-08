@@ -57,6 +57,7 @@ class _MapViewState extends State<MapView> {
         target: _cameraPosition,
         zoom: 15.0,
       ),
+      markers: widget.markers,
       polylines: widget.polylines,
       myLocationEnabled: true,
       myLocationButtonEnabled: true,

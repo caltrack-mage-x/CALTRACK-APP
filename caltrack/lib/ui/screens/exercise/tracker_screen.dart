@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'package:caltrack/ui/widgets/exercise/activity_selector.dart';
 import 'package:caltrack/ui/widgets/exercise/map_view.dart';
 import 'package:caltrack/ui/widgets/exercise/tracking_controller.dart';
@@ -20,7 +19,6 @@ class TrackerScreen extends StatefulWidget {
 
 class _TrackerScreenState extends State<TrackerScreen> {
   LatLng? _currentPosition;
-
   String _selectedActivity = 'Cycling';
   int _kcal = 120;
 
@@ -39,7 +37,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
       locationService: _locationService,
       snackbarHelper: _snackbarHelper,
       onPositionUpdate: _updateMapView,
-      currentPosition: _currentPosition ?? _initialPosition
+      currentPosition: _currentPosition ?? _initialPosition,
     );
   }
 
@@ -47,14 +45,13 @@ class _TrackerScreenState extends State<TrackerScreen> {
     Position position = await _locationService.getCurrentPosition();
     _currentPosition = LatLng(position.latitude, position.longitude);
     _updateMapView(_currentPosition ?? _initialPosition, 15);
+    _trackingController.setNewPosition(_currentPosition ?? _initialPosition);
   }
 
   void _updateMapView(LatLng newPosition, double newZoom) {
     setState(() {
-      if(
-        _currentPosition?.latitude  != _initialPosition.latitude &&
-        _currentPosition?.longitude != _initialPosition.longitude
-      ){
+      if (_currentPosition?.latitude != _initialPosition.latitude &&
+          _currentPosition?.longitude != _initialPosition.longitude) {
         _trackingController.updatePathAndDistance(newPosition);
       }
       _currentPosition = newPosition;
@@ -78,16 +75,24 @@ class _TrackerScreenState extends State<TrackerScreen> {
     };
   }
 
-
   void _toggleTracking() {
     if (_trackingController.isTracking) {
       _trackingController.stopTracking(context);
       _updateMapView(_currentPosition ?? _initialPosition, 15);
+      _trackingController.reset();
     } else {
+      _trackingController.reset();
+      setState(() {
+        _trackingController.path.clear();
+      });
       _trackingController.startTracking(context);
       _updateMapView(_currentPosition ?? _initialPosition, 18);
     }
-    setState(() {});
+  }
+
+
+  void _toggleSimulatedMovement() {
+    _trackingController.toggleSimulatedMovement(context);
   }
 
   void _showActivitySelection() {
@@ -175,6 +180,19 @@ class _TrackerScreenState extends State<TrackerScreen> {
                       shape: const CircleBorder(),
                     ),
                   ),
+                const SizedBox(width: 8),
+                // Toggle Simulated Movement Button
+                if (!_trackingController.isTracking)
+                  Container(
+                    width: 60.0,
+                    height: 60.0,
+                    child: FloatingActionButton(
+                      onPressed: _toggleSimulatedMovement,
+                      backgroundColor: Colors.purple,
+                      child: const Icon(Icons.directions_run, color: Colors.white),
+                      shape: const CircleBorder(),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -209,7 +227,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
             children: [
               Text(
                 "${distanceInMeters.toStringAsFixed(2)} meters",
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                style: const TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
               ),
               Text(
                 "${caloriesBurned.toStringAsFixed(2)} kcal burned",
@@ -291,7 +310,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
           ),
           Text(
             '$_kcal kkal/km',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.pink),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -301,16 +320,9 @@ class _TrackerScreenState extends State<TrackerScreen> {
   Set<Marker> _createMarkers() {
     return {
       Marker(
-        markerId: const MarkerId('currentLocation'),
+        markerId: const MarkerId('currentPosition'),
         position: _currentPosition ?? _initialPosition,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       ),
     };
-  }
-
-  @override
-  void dispose() {
-    _trackingController.dispose();
-    super.dispose();
   }
 }

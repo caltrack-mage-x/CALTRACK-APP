@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart'; // Import for TapGestureRecognizer
-import 'login_section.dart'; // Import your login_section.dart file
+import 'login_screen.dart'; // Import your login_screen.dart file
 
 class SignInPage extends StatelessWidget {
   const SignInPage({Key? key}) : super(key: key);

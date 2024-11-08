@@ -8,7 +8,7 @@ import 'package:caltrack/ui/widgets/exercise/snackbar_helper.dart';
 
 class TrackingController {
   bool isTracking = false;
-  bool simulateMovement = true;
+  bool simulateMovement = false;
   LatLng currentPosition;
   List<LatLng> path = [];
   double totalDistance = 0.0;
@@ -16,13 +16,16 @@ class TrackingController {
 
   final LocationService locationService;
   final SnackbarHelper snackbarHelper;
-  final Function onPositionUpdate;
+  final Function(LatLng, double) onPositionUpdate;
+
+  final double movementSpeed = 0.00002;
+  final double directionChangeRate = 0.000005;
 
   TrackingController({
     required this.locationService,
     required this.snackbarHelper,
     required this.onPositionUpdate,
-    required this.currentPosition
+    required this.currentPosition,
   });
 
   Future<void> startTracking(BuildContext context) async {
@@ -45,7 +48,7 @@ class TrackingController {
     });
   }
 
-  Future<void> getUserLocation() async {
+  void getUserLocation() async {
     if (simulateMovement) {
       simulateUserMovement();
     } else {
@@ -55,31 +58,31 @@ class TrackingController {
 
     if (isTracking) {
       updatePathAndDistance(currentPosition);
-      onPositionUpdate(currentPosition);
+      onPositionUpdate(currentPosition, 18);
     }
   }
 
+  void setNewPosition(LatLng newPosition){
+    currentPosition = newPosition;
+  }
+
+
   void updatePathAndDistance(LatLng newPosition) {
-    if(
-        newPosition.latitude != -7.966620 &&
-        newPosition.longitude != 112.632632
-    ){
-      path.add(newPosition);
-      if (path.length > 1) {
-        double distance = Geolocator.distanceBetween(
-          path[path.length - 2].latitude,
-          path[path.length - 2].longitude,
-          newPosition.latitude,
-          newPosition.longitude,
-        );
-        totalDistance += distance;
-      }
+    path.add(newPosition);
+    if (path.length > 1) {
+      double distance = Geolocator.distanceBetween(
+        path[path.length - 2].latitude,
+        path[path.length - 2].longitude,
+        newPosition.latitude,
+        newPosition.longitude,
+      );
+      totalDistance += distance;
     }
   }
 
   void simulateUserMovement() {
-    double latChange = (0.00005) * (1 + (path.length % 2 == 0 ? -1 : 1));
-    double lngChange = (0.00005) * (1 + (path.length % 3 == 0 ? -1 : 1));
+    double latChange = movementSpeed + (directionChangeRate * (path.length % 2 == 0 ? -1 : 1));
+    double lngChange = movementSpeed + (directionChangeRate * (path.length % 3 == 0 ? -1 : 1));
 
     currentPosition = LatLng(
       currentPosition.latitude + latChange,
@@ -87,13 +90,19 @@ class TrackingController {
     );
 
     updatePathAndDistance(currentPosition);
+    onPositionUpdate(currentPosition, 18);
   }
-
 
   void toggleSimulatedMovement(BuildContext context) {
     simulateMovement = !simulateMovement;
     snackbarHelper.showSnackbar(context,
         simulateMovement ? 'Simulated movement started.' : 'Simulated movement stopped.');
+  }
+
+  void reset(){
+    this.path = [];
+    this.totalDistance = 0.0;
+    getUserLocation();
   }
 
   void dispose() {

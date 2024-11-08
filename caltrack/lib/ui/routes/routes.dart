@@ -1,4 +1,4 @@
-import 'package:caltrack/splash.dart';
+import 'package:caltrack/ui/screens/auth/splash_screen.dart';
 import 'package:caltrack/ui/screens/challenge/challenge_screen.dart';
 import 'package:caltrack/ui/screens/exercise/tracker_screen.dart';
 import 'package:caltrack/ui/screens/food/capture_screen.dart';
