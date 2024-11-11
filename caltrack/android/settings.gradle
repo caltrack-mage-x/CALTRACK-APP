@@ -14,16 +14,17 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
     }
 
     plugins {
-        id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
+        id "dev.flutter.flutter-gradle-plugin" version "2.8.0" apply false
     }
 }
 
 plugins {
-    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version "7.3.0" apply false
+    id "dev.flutter.flutter-plugin-loader" version "2.8.0"
+    id "com.android.application" version "7.2.0" apply false
 }
 
 include ":app"

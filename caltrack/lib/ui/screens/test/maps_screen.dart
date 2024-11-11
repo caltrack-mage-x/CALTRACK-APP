@@ -26,7 +26,7 @@ class _MapsScreenState extends State<MapsScreen> {
           target: _initialPosition,
           zoom: 10.0,
         ),
-        markers: _createMarkers(),  // Optional: Add markers
+        markers: _createMarkers(),
       ),
     );
   }

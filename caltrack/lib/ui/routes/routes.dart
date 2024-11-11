@@ -1,4 +1,5 @@
 import 'package:caltrack/ui/screens/challenge/challenge_screen.dart';
+import 'package:caltrack/ui/screens/exercise/tracker_screen.dart';
 import 'package:caltrack/ui/screens/food/capture_screen.dart';
 import 'package:caltrack/ui/screens/test/home_screen.dart';
 import 'package:caltrack/ui/screens/test/login_screen.dart';
@@ -17,6 +18,7 @@ class AppRoutes {
   // Actual Page
   static const String challenge = '/challenge';
   static const String capture   = '/capture';
+  static const String tracker   = '/tracker';
 
   static Route<dynamic> generateRoute(RouteSettings settings, List<CameraDescription> cameras) {
     switch (settings.name) {
@@ -34,6 +36,8 @@ class AppRoutes {
         final firstCamera =  cameras.first;
         final secondCamera = cameras.last;
         return MaterialPageRoute(builder: (_) => CaptureScreen(firstCamera: firstCamera, secondCamera: secondCamera));
+      case tracker:
+        return MaterialPageRoute(builder: (_) => const TrackerScreen());
       default:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
     }

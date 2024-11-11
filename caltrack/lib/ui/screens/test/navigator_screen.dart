@@ -50,6 +50,13 @@ class NavigatorScreen extends StatelessWidget {
               },
               child: const Text('Go to Capture Screen'),
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.tracker);
+              },
+              child: const Text('Go to Tracker Screen'),
+            ),
           ],
         ),
       ),

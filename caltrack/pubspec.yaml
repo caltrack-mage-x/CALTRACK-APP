@@ -46,6 +46,7 @@ dependencies:
   path_provider: ^2.1.4
   path: ^1.8.3
   permission_handler: ^11.3.1
+  geolocator: ^11.1.0
 
 dev_dependencies:
   flutter_test:
